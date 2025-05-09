@@ -199,6 +199,73 @@ def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_s
 
     return interaction_states
 
+def track_specific_interactions_over_time(protein_protein_tracking, ion_surrounding_atoms_each_frame, atom_types):
+    """
+    Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.
+    0 means the interaction is not present at this timestep. 1 means it is.
+    
+    Args:
+        protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of
+            ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format
+            as output by the functions protein_protein_ion_coordination and ion_coordination.
+        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion's
+            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+            distance of the ion.
+        atom_types (list): A list of atom types in string format to look for around iron atoms.
+    Returns:
+        interaction_states (dictionary): A dictionary where keys specify which interaction this is. Value is a list, where each
+            entry is a boolean indicating whether or not this interaction is present at this timestep.
+    """
+    # Instantiate an empty dictionary to store interaction information.
+    interaction_states = {}
+    
+    # Iterate through the list of ions that are facilitating interactions at each frame.
+    for t, ions in enumerate(protein_protein_tracking):
+        # Create a set to store residue pairs that are interacting at this time step
+        current_interactions = []
+        
+        # Iterate through each ion and make a set from the unique protein residues around it.
+        for ion in ions:
+            # Access the surroundings of this ion at this frame.
+            nearby_atoms = ion_surrounding_atoms_each_frame[t][ion]
+            
+            # Make a list of unique protein residues surrounding this ion.
+            unique_protein_residues = []
+            for atom in nearby_atoms:
+                segid_resid = f"{atom.segid}:{atom.resid}:{atom.resname}:{atom.type}"
+                if atom.type in atom_types and segid_resid not in unique_protein_residues:
+                    unique_protein_residues.append(segid_resid)
+            # Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.
+            interactions = generate_combinations(sorted(unique_protein_residues), min_length = len(atom_types))
+
+            # Create a tuple which unique identifies this interaction.
+            for interaction in interactions:
+                # Filter interactions to make sure each one has all atom types in the list.
+                check = 1
+                for atom_type in atom_types:
+                    # Parse the values in this interaction
+                    types = [get_characters_after_last_colon(residue) for residue in interaction]
+                    if atom_type not in types:
+                        check = 0
+                        break
+                # If all requested atom types are found in this interaction, do the following.
+                if check:
+                    # Check if this unique interaction is already being tracked in interaction_states.
+                    if interaction not in interaction_states:
+                        # Add this interaction interaction states, specifying false for all previous frames.
+                        interaction_states[interaction] = [0] * t
+                    # Indicate that this interaction exists at the current frame.
+                    interaction_states[interaction].append(1)
+                    # Add this interaction to a list of current interactions.
+                    current_interactions.append(interaction)
+    
+        # If an interaction that is being tracked is not present at this step, indicate that it does not exist
+        # at this step.
+        for interaction in interaction_states:
+            if interaction not in current_interactions:
+                interaction_states[interaction].append(0)
+    return interaction_states
+
 def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=None, xlabel='Frame'):
     """
     Generates a heatmap from a dictionary where each key corresponds to a list of 0's and 1's.
