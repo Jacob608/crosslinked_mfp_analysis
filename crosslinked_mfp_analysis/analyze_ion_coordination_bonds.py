@@ -185,6 +185,8 @@ def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_s
                     unique_protein_residues.append(segid_resid)
             # Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.
             interactions = generate_combinations(sorted(unique_protein_residues))
+            # Add an element to the beginning of each tuple in interactions which specifies which ion is facilitating these interactions.
+            interactions = [(str(ion), *interaction) for interaction in interactions]
             # Create a tuple which unique identifies this interaction.
             for interaction in interactions:
                 # Check if this unique interaction is already being tracked in interaction_states.
@@ -242,7 +244,8 @@ def track_specific_interactions_over_time(protein_protein_tracking, ion_surround
                     unique_protein_residues.append(segid_resid)
             # Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.
             interactions = generate_combinations(sorted(unique_protein_residues), min_length = len(atom_types))
-
+            # Add an element to the beginning of each tuple in interactions which specifies which ion is facilitating these interactions.
+            interactions = [(str(ion), *interaction) for interaction in interactions]
             # Create a tuple which unique identifies this interaction.
             for interaction in interactions:
                 # Filter interactions to make sure each one has all atom types in the list.
