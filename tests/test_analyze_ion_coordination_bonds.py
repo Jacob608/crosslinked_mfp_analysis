@@ -7,17 +7,36 @@ from crosslinked_mfp_analysis.crosslinked_mfp_analysis.analyze_ion_coordination_
 from crosslinked_mfp_analysis.crosslinked_mfp_analysis.analyze_ion_surroundings import(
     collect_ion_surroundings
 )
-from crosslinked_mfp_analysis.tests.test_analyze_ion_surroundings import load_pickle
 import pickle as pkl
 import MDAnalysis as mda
 
-def load_example_simulation():
+# Function for reading pickle files from the examples folder into a variable.
+def load_pickle(file):
+    # Load pickle as pkl.
+    with open(f"tests/example_files/{file}", 'rb') as file_obj:
+        return pkl.load(file_obj)
+    
+def load_example_simulation(psf='tests/example_files/ionized_DO2P_0xlinks.psf', dcd_list=['tests/example_files/8_T300_P1_DO2P_0xlinks.dcd','tests/example_files/tensile_test_DO2P_0xlinks.dcd'], cutoff = 1.9):
+    """Prepare an mdanalysis universe and the output of the function collect_ion_surroundings
+    using the psf file and list of dcd files (dcd_list) specified.
+    Args:
+        psf (string): Path to the protein structure file to be loaded in the mdanalysis universe. Default is 
+            'tests/example_files/ionized_DO2P_0xlinks.psf'.
+        dcd_list (list): A list of strings that each specify the paths to the dcd files that should
+            be loaded into the mdanalysis universe. Default is ['tests/example_files/8_T300_P1_DO2P_0xlinks.dcd',
+            'tests/example_files/tensile_test_DO2P_0xlinks.dcd'].
+        cutoff (float): The cutoff distance for interactions that was used to create the assertion files to compare to.
+            Default is 1.9.
+
+    Returns:
+        u (MDAnalysis Universe): MDAnalysis universe with this psf and list of dcd files.
+        ion_surrounding_atoms_each_frame (dictionary): The output of the function collect_ion_surroundings.
+    """
     # Load the example universe.
-    u = mda.Universe('tests/example_files/ionized_DO2P_0xlinks.psf',['tests/example_files/8_T300_P1_DO2P_0xlinks.dcd','tests/example_files/tensile_test_DO2P_0xlinks.dcd'])
-    cutoff_dist = 1.9
+    u = mda.Universe(psf,dcd_list)
     # Get the output of collect_ion_surroundings for this universe.
     ion_surrounding_atoms_each_frame = collect_ion_surroundings(
-        universe = u, cutoff = cutoff_dist, verbose = True, step = 100)
+        universe = u, cutoff = cutoff, verbose = True, step = 100)
 
     return u, ion_surrounding_atoms_each_frame
 
