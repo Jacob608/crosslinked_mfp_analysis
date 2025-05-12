@@ -4,14 +4,12 @@ from crosslinked_mfp_analysis.crosslinked_mfp_analysis.analyze_ion_surroundings 
     unique_surroundings_frequency,
     count_atom_types_around_ion_over_time
 )
+from crosslinked_mfp_analysis.tests.test_analyze_ion_coordination_bonds import (
+    load_example_simulation,
+    load_pickle
+)
 import pickle as pkl
 import MDAnalysis as mda
-
-# Function for reading pickle files from the examples folder into a variable.
-def load_pickle(file):
-    # Load pickle as pkl.
-    with open(f"tests/example_files/{file}", 'rb') as file_obj:
-        return pkl.load(file_obj)
 
 def test_make_timeseries():
     dcd_duration=[2000000,
@@ -31,14 +29,15 @@ def test_make_timeseries():
 
 def test_collect_ion_surroundings():
     # Load the example universe.
-    u = mda.Universe('tests/example_files/ionized.psf',['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'])
+    # Get the output of collect_ion_surroundings for this universe.
+    u, ion_surrounding_atoms_each_frame = load_example_simulation(
+        psf = 'tests/example_files/ionized.psf',
+        dcd_list = ['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'],
+        cutoff=1.9
+    )
     # Load the expected output of collect_ion_surroundings.
     test_ion_surrounding_atoms_each_frame = load_pickle('assert_for_collect_ion_surroundings.pkl')
-    cutoff_dist = 1.9
-    # Get the output of collect_ion_surroundings for this universe.
-    ion_surrounding_atoms_each_frame = collect_ion_surroundings(
-        universe = u, cutoff = cutoff_dist, verbose = True, step = 100)
-    
+
     for i, frame in enumerate(test_ion_surrounding_atoms_each_frame):
         for ion in frame.keys():
             for ii, type in enumerate(frame[ion]):
@@ -46,12 +45,13 @@ def test_collect_ion_surroundings():
 
 def test_unique_surroundings_frequency():
     # Load the example universe.
-    u = mda.Universe('tests/example_files/ionized.psf',['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'])
-    cutoff_dist = 1.9
     # Get the output of collect_ion_surroundings for this universe.
-    ion_surrounding_atoms_each_frame = collect_ion_surroundings(
-        universe = u, cutoff = cutoff_dist, verbose = True, step = 100
-        )
+    u, ion_surrounding_atoms_each_frame = load_example_simulation(
+        psf = 'tests/example_files/ionized.psf',
+        dcd_list = ['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'],
+        cutoff=1.9
+    )
+
     # Get the outpout of unique_surroundings_frequency
     environments_over_time = unique_surroundings_frequency(
         surroundings_each_frame = ion_surrounding_atoms_each_frame,
@@ -67,12 +67,12 @@ def test_unique_surroundings_frequency():
 
 def test_count_atom_types_around_ion_over_time():
     # Load the example universe.
-    u = mda.Universe('tests/example_files/ionized.psf',['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'])
-    cutoff_dist = 1.9
     # Get the output of collect_ion_surroundings for this universe.
-    ion_surrounding_atoms_each_frame = collect_ion_surroundings(
-        universe = u, cutoff = cutoff_dist, verbose = True, step = 100
-        )
+    u, ion_surrounding_atoms_each_frame = load_example_simulation(
+        psf = 'tests/example_files/ionized.psf',
+        dcd_list = ['tests/example_files/8_T300_P1.dcd','tests/example_files/tensile_test.dcd'],
+        cutoff=1.9
+    )
     # Get the outpout of count_atom_types_around_ion_over_time
     types_dict = count_atom_types_around_ion_over_time(
         ion_surroundings = ion_surrounding_atoms_each_frame
