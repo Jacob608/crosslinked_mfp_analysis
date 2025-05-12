@@ -1,4 +1,9 @@
 import re
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import matplotlib.patches as mpatches
+
 
 def generate_combinations(input_list, min_length = 2):
     """Generate all possible combinations of elements in the input list.
@@ -272,9 +277,9 @@ def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=
 
     Args:
         data_dict (dict): A dictionary where keys are row labels and values are lists of 0's and 1's.
-        title (string): Plot title.
-        time_series (list like): A list or array that is the same length as the number of keys in data_dict.
-        xlabel (string): x-axis label.
+        title (string): Plot title. Default is 'Heatmap of Interaction Presence'.
+        time_series (list like): A list or array that is the same length as the number of keys in data_dict. Default is None
+        xlabel (string): x-axis label. Default is 'Frame'.
         
     Returns:
         None: Displays a heatmap plot.
@@ -307,15 +312,13 @@ def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=
     if time_series is None:
         time_series = range(max_length)
 
-#     column_widths = np.diff(time_series + [time_series[-1] + (time_series[-1] - time_series[-2])])
-
     # Create a heatmap using seaborn
     plt.figure(figsize=(10, len(keys)/5))
-    sns.heatmap(heatmap_data, annot=False, vmin=0, vmax=1, cmap='gray', cbar=False, xticklabels=time_series, yticklabels=keys, linewidths=1, linecolor='grey')
+    sns.heatmap(heatmap_data, annot=False, vmin=0, vmax=1, cmap='gray_r', cbar=False, xticklabels=time_series, yticklabels=keys, linewidths=1, linecolor='grey')
 
     # Create legend
-    interaction_patch = mpatches.Patch(color='white', label='Interaction')
-    no_interaction_patch = mpatches.Patch(color='black', label='No Interaction')
+    interaction_patch = mpatches.Patch(color='black', label='Interaction')
+    no_interaction_patch = mpatches.Patch(color='white', label='No Interaction')
     plt.legend(handles=[interaction_patch, no_interaction_patch], loc='right', bbox_to_anchor=(1.6, 0.5),facecolor='gray', fontsize=large_font)
 
     # Rotate row labels to read horizontally
@@ -325,19 +328,6 @@ def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=
     plt.xlabel(xlabel, fontsize=large_font)
     plt.ylabel('Interactions', fontsize=large_font)
     plt.title(title, fontsize=large_font)
-
-#     # Adjust column widths
-#     ax = plt.gca()
-#     ax.set_xticks(np.arange(len(time_series)) + 0.5)
-#     ax.set_xticklabels(time_series)
-
-#     for tick in ax.get_xticklabels():
-#         tick.set_rotation(90)
-
-#     for spine in ax.spines.values():
-#         spine.set_visible(False)
-
-#     ax.set_xticks(np.cumsum(column_widths) - column_widths / 2)
 
     # Show the plot
     plt.show()
