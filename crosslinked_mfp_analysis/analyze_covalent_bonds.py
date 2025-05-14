@@ -43,19 +43,32 @@ def process_broken_bonds(simulation_path):
 
     return broken_bonds_df
 
-def get_bond_coeffs_start_end(filepath):
+def get_data_section_start_end(filepath, section, empty_lines_per_section=2, header_type = 'starts with'):
     """
     Read the LAMMPS data file specified by the filepath and return the indices of the first and final
-    lines of the 'Bond Coeffs' section. Also return the index of the last line in the file.
+    lines of the section specified. Also return the index of the last line in the file.
     
     Args:
         filepath (string): Path to the LAMMPS data file.
+        section (string): This string must match exactly with the line that indicates the start of the 
+            desired section in the LAMMPS data file. ex. If the desired section is the 'Bond Coeffs' section,
+            section must equal 'Bond Coeffs'.
+        empty_lines_per_section (int): The number of empty lines that are in each section of the file. Default
+            is 2, consistent with LAMMPS data file format.
+        header_type (string): Indicates whether the section header contains the section string or starts with the section string.
+            Options are 'starts with' or 'contains'. Default is 'starts with'.
     
     Returns:
-        start_ind (int): The index of the first line in the 'Bond Coeffs' section.
-        end_ind (int): The index of the last line in the 'Bond Coeffs' section.
+        start_ind (int): The index of the first line in the requested section.
+        end_ind (int): The index of the last line in the requested section.
         final_ind (int): The index of the last line in the file.
+    
+    Raises:
+        ValueError: Invalid input for header type if header_type is not a recognized sring.
     """
+    # Raise an error if header_type does not equal a valid input.
+    if header_type not in ['starts with', 'contains']:
+        raise ValueError(f"Invalid input for header type {header_type}")
     # Read the file line by line into lines.
     with open(filepath, 'r') as datafile:
         lines = datafile.readlines()
@@ -64,18 +77,25 @@ def get_bond_coeffs_start_end(filepath):
     start_ind = None
     end_ind = None
     # Loop through lines to detect the beginning and ending of the Bond Coeffs section
-    in_bond_coeffs_section = False
+    in_section = False
+    empty_line_count = 0
     for i, line in enumerate(lines):
-        if line.strip().startswith("Bond Coeffs"):
-            start_ind = i + 2
-            in_bond_coeffs_section = True
-            empty_line_count = 1
-        elif in_bond_coeffs_section:
+        if not in_section:
+            if header_type == 'starts with':
+                if line.strip().startswith(section):
+                    in_section = True
+                    print(f'Found section {section}')
+            elif header_type == 'contains':
+                if section in line.strip():
+                    in_section = True
+                    print(f'Found section {section}')
+        elif in_section:
+            if start_ind is None and line.strip() != "":
+                start_ind = i
             if line.strip() == "":
-                if empty_line_count == 1:
-                    empty_line_count += 1
-                else:
-                    in_bond_coeffs_section = False
+                empty_line_count += 1
+                if empty_line_count == empty_lines_per_section:
+                    in_section = False
                     end_ind = i - 1
                     break
     return start_ind, end_ind, final_ind
@@ -93,7 +113,10 @@ def convert_types_to_labels(bondtype, data_file_path):
         label (str): Both atom types participating in this bond are connected by a hyphen.
     """
     # Get the indices for the start and end of the Bond Coeffs section as well as the number of lines.
-    start, end, final = get_bond_coeffs_start_end(data_file_path)
+    start, end, final = get_data_section_start_end(
+        filepath=data_file_path,
+        section='Bond Coeffs'
+        )
     # Read ionized.data into a Pandas DataFrame, looking only at the Bond Coeffs section.
     bond_coeffs = pd.read_csv(data_file_path,sep='\s+',\
                               skiprows=list(range(0,start-1))+list(range(end + 1,final)),header=None,\
@@ -160,3 +183,109 @@ def plot_bonds_broken_single_simulation(df,title=None, data_file_path=None, stre
     ax.set_ylabel('Cumulative Number of Bonds Broken')
     ax.legend()
     plt.show()
+
+def identify_broken_bonds(pre_data_file, post_data_file, psf_file):
+    """
+    Identifies broken molecular bonds by comparing bond data before and after a simulation,
+    and enriches the results with atom metadata from a PSF file.
+
+    This function reads bond information from two LAMMPS-style data files representing
+    the system before and after a simulation (e.g., ionization or tensile testing).
+    It identifies bonds that existed in the pre-simulation file but are missing in the
+    post-simulation file, indicating they were broken. It then enriches this list with
+    atom metadata from a PSF file for better interpretability.
+
+    Args:
+        pre_data_file (str): Path to the data file containing bond information before the simulation.
+        post_data_file (str): Path to the data file containing bond information after the simulation.
+        psf_file (str): Path to the PSF file containing atom metadata (e.g., segment names, residue IDs).
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing information about the broken bonds, including:
+            - BondID
+            - BondType
+            - AtomID1, AtomID2
+            - Segment names and atom types for both atoms involved in each broken bond
+
+    Raises:
+        FileNotFoundError: If any of the input files are not found.
+        ValueError: If the expected sections are not found in the input files.
+
+    Example:
+        >>> broken_bonds_df = identify_broken_bonds("ionized.data", "tensile_test.data", "ionized.psf")
+        >>> print(broken_bonds_df.head())
+    """
+
+    column_names = ['BondID','BondType','AtomID1','AtomID2']
+    # Load the bond list from ionized.data into a DataFrame
+    start, end, final = get_data_section_start_end(
+        filepath=pre_data_file,
+        section='Bonds')
+    pre_break_bonds_df = pd.read_csv(pre_data_file,
+                                     sep='\s+',
+                                     usecols=[0,1,2,3],
+                                     skiprows=list(range(0,start-1)) + list(range(end+1,final)),
+                                     header=None,
+                                     names=column_names)
+    # Load the bond list from tensile_test_strain_5.data into a DataFrame
+    start, end, final = get_data_section_start_end(
+        filepath=post_data_file,
+        section='Bonds')
+    
+    post_break_bonds_df = pd.read_csv(post_data_file,
+                                      sep='\s+',
+                                      usecols=[0,1,2,3],
+                                      skiprows=list(range(0,start-1)) + list(range(end+1,final)),
+                                      header=None,
+                                      names=column_names)
+    # Perform an anti-join to return observations in ionized.data that are not intensile_test_strain_5.data.
+    pre_post_break_df = pre_break_bonds_df.merge(post_break_bonds_df,
+                                                 on=['AtomID1','AtomID2'],
+                                                 how='outer',indicator=True,
+                                                 suffixes=('_pre','_post'))
+    # Filter rows where only a left join could be achieved.
+    deleted_bonds_df = pre_post_break_df.loc[pre_post_break_df['_merge']=='left_only']
+
+    # Remove Columns Only Containing NaN values and _merge column.
+    deleted_bonds_df = deleted_bonds_df.drop(columns=['BondID_post','BondType_post','_merge'])
+
+    # Load atom list from psf file.
+    psf_atom_list_colnames = ['AtomID','SegName','ResID','ResName','AtomName','AtomTypeName']
+    start, end, final = get_data_section_start_end(
+        filepath=psf_file,
+        section='!NATOM',
+        empty_lines_per_section=1,
+        header_type='contains')
+    print(start, end, final)
+    psf_atom_list_df = pd.read_csv(psf_file,
+                                   sep='\s+',
+                                   usecols=[0,1,2,3,4,5],
+                                   skiprows=list(range(0,start-1))+list(range(end+1,final)),
+                                   header=None,
+                                   names=psf_atom_list_colnames)
+    # Join psf_atom_list_df to deleted_bonds_df on a left join to add information about 'AtomID1' from 'ionized.psf'
+    deleted_bonds_resids_df = deleted_bonds_df.merge(psf_atom_list_df,how='left',left_on='AtomID1',right_on='AtomID')
+    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID','ResID'])
+    # Clean Up Column Names
+    new_col_dict1 = {'SegName':'AtomID1_SegName',
+                    'ResID':'AtomID1_ResID',
+                    'AtomType':'AtomID1_AtomType',
+                    'AtomTypeName':'AtomID1_AtomTypeName'}
+    deleted_bonds_resids_df.rename(columns=new_col_dict1,inplace=True)
+
+    # Join psf_atom_list_df to deleted_bonds_df on a left join to add information about 'AtomID2' from 'ionized.psf'
+    deleted_bonds_resids_df = deleted_bonds_resids_df.merge(psf_atom_list_df,how='left',left_on='AtomID2',right_on='AtomID')
+    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID','ResID'])
+    # Clean Up Column Names
+    new_col_dict2 = {'SegName':'AtomID2_SegName',
+                    'ResID':'AtomID2_ResID',
+                    'AtomType':'AtomID2_AtomType',
+                    'AtomTypeName':'AtomID2_AtomTypeName',
+                    'BondID_pre':'BondID',
+                    'BondType_pre':'BondType'}
+    deleted_bonds_resids_df.rename(columns=new_col_dict2,inplace=True)
+
+    # Remove more columns to make table more concise.
+    deleted_bonds_resids_trimmed = deleted_bonds_resids_df.drop(columns=['AtomName_x','AtomName_y'])
+    
+    return deleted_bonds_resids_trimmed
