@@ -3,39 +3,39 @@ import numpy as np
 import distinctipy
 import matplotlib.pyplot as plt
 
+
 def make_timeseries(durations, dumpfreqs):
     """
     Make a numpy array that contains the time in femtoseconds corresponding to each frame in a simulation.
-    
+
     Args:
         durations (list): Each entry is the total number of timesteps in a dcd file.
         dumpfreqs (list): Each entry is the number of timesteps between each output frame.
-    
+
     Returns:
         time (np.array): Each element in time represents the time in real units corresponding to each frame
             in the trajectory.
     """
     # Make the timeseries for the first trajectory.
-    time = np.arange(0,durations[0]+dumpfreqs[0],dumpfreqs[0])
-    
+    time = np.arange(0, durations[0] + dumpfreqs[0], dumpfreqs[0])
+
     # Add the timeseries data for the remaining trajectories.
-    for i in range(1,len(durations)):
-        time = np.concatenate((time,np.arange(dumpfreqs[i],durations[i]+dumpfreqs[i],dumpfreqs[i])+time[-1]))
-
-
+    for i in range(1, len(durations)):
+        time = np.concatenate((time, np.arange(dumpfreqs[i], durations[i] + dumpfreqs[i], dumpfreqs[i]) + time[-1]))
     return time
 
-def collect_ion_surroundings(universe, cutoff, ion_type = 'FE3P', verbose=True, step=100):
+
+def collect_ion_surroundings(universe, cutoff, ion_type='FE3P', verbose=True, step=100):
     """
     Make a list of dictionaries to store the surroundings of each ion within the specified cutoff distance
     at each frame.
-    
+
     Args:
         universe (MDAnalysis Universe): trajectory for this simulation.
         cutoff (float): The cutoff distance to be used to make interaction lists with ions.
         ion_type (string): The atom type as it appears in the psf file used to make the universe.
         step (int): Number of frames to skip between analyzed frames in the trajectory.
-        
+
     Returns:
         ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion's
             residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
@@ -48,33 +48,33 @@ def collect_ion_surroundings(universe, cutoff, ion_type = 'FE3P', verbose=True, 
     for ts in universe.trajectory[::step]:
         # Instantiate a dictionary to store the surrounding atom information for each ion during this frame.
         ion_surrounding_atoms = {}
-        
+
         # Iterate over each ion.
         for ion_atom in universe.select_atoms(f"type {ion_type}"):
             # Find atoms within the cutoff distance of the current ion.
             nearby_atoms = universe.select_atoms(f'around {cutoff} index {ion_atom.index}')
             # Store the surrounding atom information in a dictionary.
             ion_surrounding_atoms[f'{ion_atom.resid}'] = nearby_atoms
-        
+
         # Append this dictionary to the list of frames being analyzed.
         ion_surrounding_atoms_each_frame.append(ion_surrounding_atoms)
-        
+
         # Plot progress updates.
         if verbose:
             print(f"Finished analyzing frame {universe.trajectory.frame}")
-    
     return ion_surrounding_atoms_each_frame
 
-def unique_surroundings_frequency(surroundings_each_frame, verbose = True):
+
+def unique_surroundings_frequency(surroundings_each_frame, verbose=True):
     """
     For each unique set of atom types surrounding a certain atom, make a list that specifies how many times
     that unique set appears at each frame in the simulation.
-    
+
     Args:
         surroundings_each_frame (list): Each list element is a dictionary with keys specifying each ion's
             residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
             distance of the ion. Has the same format as the output of collect_iron_surroundings.
-    
+
     Returns:
         environments_over_time (dictionary): A dictionary where each key is unique to a configuration of atoms around
             an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms
@@ -82,25 +82,25 @@ def unique_surroundings_frequency(surroundings_each_frame, verbose = True):
     """
     # Instantiate the dictionary to be returned.
     environments_over_time = {}
-    
+
     # Iterate over the list of dictionaries containing atom selections within a cutoff distance of each ion.
     for i, frame in enumerate(surroundings_each_frame):
-        
+
         # Iterate over the keys in this entry of surroundings_each_frame.
         for resid in frame:
             # Access and sort the atom selection surrounding this ion.
             atom_selection = sorted(frame[resid].types)
-            
+
             # Make a dictionary key that is specific to this selection.
-            # If there are 1 OT, and 2 HT atoms with the cutoff distance, 
-            # then the key is "HT HT OT", which is the atom types concatenated 
+            # If there are 1 OT, and 2 HT atoms with the cutoff distance,
+            # then the key is "HT HT OT", which is the atom types concatenated
             # as a string in alphabetical order.
             config_key = ''
             for j, entry in enumerate(atom_selection):
                 config_key = config_key + entry
-                if j+1 != len(atom_selection):
+                if j + 1 != len(atom_selection):
                     config_key += ' '
-                
+
             # If there are no atoms in the surroundings, make a special key.
             if config_key == '':
                 config_key = f'none within cutoff'
@@ -117,10 +117,11 @@ def unique_surroundings_frequency(surroundings_each_frame, verbose = True):
             print(f"Analyzed list element {i}")
     return environments_over_time
 
+
 def sort_and_plot_unique_surroundings(environments_over_time, cutoff, timeseries, title, step=100, max_entries=6):
     """
     Make a plot counting the number of times each unique environment appears at each frame.
-    
+
     Args:
         environments_over_time (dictionary): A dictionary where each key is unique to a configuration of atoms around
             an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms
@@ -131,23 +132,23 @@ def sort_and_plot_unique_surroundings(environments_over_time, cutoff, timeseries
         step (int): Number of frames that were skipped between analyzed frames in the trajectory, when
             running the function collect_ion_surroundings.
         max_entries (int): Specifies the maximum number of data series to be included in the plot.
-    
+
     Returns:
         Nothing.
     """
     # Sort the data series based on the maximum value in each series.
-    n = -1 # Ignore the first n frames when sorting by maximum number of occurences of each environment.
+    n = -1  # Ignore the first n frames when sorting by maximum number of occurences of each environment.
     sorted_environment_over_time = sorted(environments_over_time.items(), key=lambda x: max(x[1][n:]), reverse=True)
-    
+
     # Generate distinct colors for each series.
     colors = distinctipy.get_colors(len(sorted_environment_over_time))
-    
+
     # Plot each environment over time.
     for i, (label, series) in enumerate(sorted_environment_over_time[:max_entries]):
-        plt.plot(timeseries[::step]/1000000,series, label=label,linestyle='--',marker='o',color=colors[i])
-    
+        plt.plot(timeseries[::step] / 1000000, series, label=label, linestyle='--', marker='o', color=colors[i])
+
     # Customize plot properties.
-    plt.title(f'Unique Contact Sets within {cutoff} $\AA$')
+    plt.title(f'Unique Contact Sets within {cutoff} $\\AA$')
     plt.suptitle(title)
     plt.ylabel('Number of Contacts')
     plt.xlabel('Time (ns)')
@@ -155,10 +156,11 @@ def sort_and_plot_unique_surroundings(environments_over_time, cutoff, timeseries
     plt.grid()
     plt.show()
 
+
 def count_atom_types_around_ion_over_time(ion_surroundings):
     """
     Count how many times each atom type is within the cutoff distance of an ion at each frame.
-    
+
     Args:
         ion_surroundings (dictionary): Each list element is a dictionary with keys specifying each ion's
             residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
@@ -182,13 +184,13 @@ def count_atom_types_around_ion_over_time(ion_surroundings):
                 else:
                     types_dict[atom_type] = np.zeros(len(ion_surroundings))
                     types_dict[atom_type][i] += 1
-                    
     return types_dict
+
 
 def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normalize=False):
     """
     Make a plot of the number of times each atom type is within the cutoff distance of an ion over time.
-    
+
     Args:
         types_dict (dictionary): A dictionary where each key is an atom type, and the corresponding value for each
             key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.
@@ -200,7 +202,7 @@ def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normaliz
         Nothing.
     """
     # Sort the data series based on the maximum value in each series.
-    n = -1 # Ignore the first n frames when sorting by maximum number of occurences of each environment.
+    n = -1  # Ignore the first n frames when sorting by maximum number of occurences of each environment.
     sorted_types_dict = sorted(types_dict.items(), key=lambda x: max(x[1][n:]), reverse=True)
 
     # Generate distinct colors for each series.
@@ -210,8 +212,8 @@ def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normaliz
     max_plots = len(sorted_types_dict)
     for i, (label, series) in enumerate(sorted_types_dict[:max_plots]):
         if normalize:
-            series = series/160
-        plt.plot(timeseries[::100]/1000000,series,label=label, linestyle='--', marker='o',color=colors[i])
+            series = series / 160
+        plt.plot(timeseries[::100] / 1000000, series, label=label, linestyle='--', marker='o', color=colors[i])
     plt.suptitle(title)
     plt.legend()
     plt.xlabel('Time (ns)')
