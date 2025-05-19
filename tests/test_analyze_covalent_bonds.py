@@ -22,21 +22,22 @@ def test_process_broken_bonds():
             for i, val in enumerate(test_broken_bonds_df[column]):
                 assert val == broken_bonds_df[column][i]
 
+
 def test_get_data_section_start_end():
     start_ind, end_ind, final_ind = get_data_section_start_end(
         filepath='tests/example_files/ionized.data',
-        section='Bond Coeffs'
-        )
+        section='Bond Coeffs')
     assert start_ind == 22632
     assert end_ind == 22690
     assert final_ind == 117558
 
+
 def test_convert_types_to_labels():
     label1 = convert_types_to_labels(
-        bondtype = 59,
-        data_file_path = "tests/example_files/ionized.data"
-    )
+        bondtype=59,
+        data_file_path="tests/example_files/ionized.data")
     assert label1 == f"type 59: HT-OT"
+
 
 def test_identify_broken_bonds():
     # Get the output of identify_broken_bonds for the test files.

@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.patches as mpatches
 
 
-def generate_combinations(input_list, min_length = 2):
+def generate_combinations(input_list, min_length=2):
     """Generate all possible combinations of elements in the input list.
 
     This function generates a list of tuples containing every possible combination
@@ -49,11 +49,12 @@ def get_characters_after_last_colon(input_string):
         return match.group(0)
     return ""
 
-def protein_protein_ion_coordination(ion_surrounding_atoms_each_frame, non_protein = ["CLA", "FE3P", "HT", "OT"]):
+
+def protein_protein_ion_coordination(ion_surrounding_atoms_each_frame, non_protein=["CLA", "FE3P", "HT", "OT"]):
     """
     Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction
     facilitated by the ion.
-    
+
     Args:
         ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion's
             residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
@@ -75,14 +76,14 @@ def protein_protein_ion_coordination(ion_surrounding_atoms_each_frame, non_prote
         for ion, nearby_atoms in frame.items():
             # Instantiate a dictionary to store resids of atoms that are protein.
             unique_protein_residues = []
-            
+
             # Iterate over all of the atoms in the atomselection of this ion's surroundings.
             for atom in nearby_atoms:
                 # Verify that the type of this atom is not in the list of non-protein atom types.
                 if atom.type not in non_protein:
                     # Create a unique residue identifier from resid and segid for this atom.
                     residue_identifier = f"{atom.residue.resid}:{atom.residue.segid}"
-                        
+
                     # Check if this resid and segid combination is a new residue.
                     if residue_identifier not in unique_protein_residues:
                         unique_protein_residues.append(residue_identifier)
@@ -91,14 +92,15 @@ def protein_protein_ion_coordination(ion_surrounding_atoms_each_frame, non_prote
                 frame_protein_protein_tracking.append(ion)
         # Append the list for this frame to the list tracking the whole trajectory.
         protein_protein_tracking.append(frame_protein_protein_tracking)
-        
+
     return protein_protein_tracking
+
 
 def ion_coordination(ion_surrounding_atoms_each_frame, atom_types):
     """
     Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction
     between requested atom types in atom_types list facilitated by the ions.
-    
+
     Args:
         ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion's
             residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
@@ -120,12 +122,12 @@ def ion_coordination(ion_surrounding_atoms_each_frame, atom_types):
         for ion, nearby_atoms in frame.items():
             # Instantiate a dictionary to store resids of atoms that are protein.
             unique_protein_residues = []
-            
+
             # Check if all of the atoms in atom_types are found in this ion's surroundings.
             check = 1
             for atom_type in atom_types:
                 if atom_type not in nearby_atoms.types:
-                    check=0
+                    check = 0
                     break
             # If all of the atoms in atom_types are found in this ion's surroundings, check if it is a protein-protein interaction.
             if check:
@@ -144,14 +146,15 @@ def ion_coordination(ion_surrounding_atoms_each_frame, atom_types):
                 frame_protein_protein_tracking.append(ion)
         # Append a the list for this frame to the list tracking the whole trajectory.
         protein_protein_tracking.append(frame_protein_protein_tracking)
-        
+
     return protein_protein_tracking
 
-def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_surrounding_atoms_each_frame, non_protein = ["CLA", "FE3P", "HT", "OT"]):
+
+def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_surrounding_atoms_each_frame, non_protein=["CLA", "FE3P", "HT", "OT"]):
     """
     Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.
     0 means the interaction is not present at this timestep. 1 means it is.
-    
+
     Args:
         protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of
             ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format
@@ -166,17 +169,17 @@ def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_s
     """
     # Instantiate an empty dictionary to store interaction information.
     interaction_states = {}
-    
+
     # Iterate through the list of ions that are facilitating interactions at each frame.
     for t, ions in enumerate(protein_protein_tracking):
         # Create a set to store residue pairs that are interacting at this time step
         current_interactions = []
-        
+
         # Iterate through each ion and make a set from the unique protein residues around it.
         for ion in ions:
             # Access the surroundings of this ion at this frame.
             nearby_atoms = ion_surrounding_atoms_each_frame[t][ion]
-            
+
             # Make a list of unique protein residues surrounding this ion.
             unique_protein_residues = []
             for atom in nearby_atoms:
@@ -197,7 +200,7 @@ def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_s
                 interaction_states[interaction].append(1)
                 # Add this interaction to a list of current interactions.
                 current_interactions.append(interaction)
-    
+
         # If an interaction that is being tracked is not present at this step, indicate that it does not exist
         # at this step.
         for interaction in interaction_states:
@@ -206,11 +209,12 @@ def track_protein_protein_interactions_over_time(protein_protein_tracking, ion_s
 
     return interaction_states
 
+
 def track_specific_interactions_over_time(protein_protein_tracking, ion_surrounding_atoms_each_frame, atom_types):
     """
     Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.
     0 means the interaction is not present at this timestep. 1 means it is.
-    
+
     Args:
         protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of
             ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format
@@ -225,17 +229,17 @@ def track_specific_interactions_over_time(protein_protein_tracking, ion_surround
     """
     # Instantiate an empty dictionary to store interaction information.
     interaction_states = {}
-    
+
     # Iterate through the list of ions that are facilitating interactions at each frame.
     for t, ions in enumerate(protein_protein_tracking):
         # Create a set to store residue pairs that are interacting at this time step
         current_interactions = []
-        
+
         # Iterate through each ion and make a set from the unique protein residues around it.
         for ion in ions:
             # Access the surroundings of this ion at this frame.
             nearby_atoms = ion_surrounding_atoms_each_frame[t][ion]
-            
+
             # Make a list of unique protein residues surrounding this ion.
             unique_protein_residues = []
             for atom in nearby_atoms:
@@ -243,7 +247,7 @@ def track_specific_interactions_over_time(protein_protein_tracking, ion_surround
                 if atom.type in atom_types and segid_resid not in unique_protein_residues:
                     unique_protein_residues.append(segid_resid)
             # Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.
-            interactions = generate_combinations(sorted(unique_protein_residues), min_length = len(atom_types))
+            interactions = generate_combinations(sorted(unique_protein_residues), min_length=len(atom_types))
             # Add an element to the beginning of each tuple in interactions which specifies which ion is facilitating these interactions.
             interactions = [(str(ion), *interaction) for interaction in interactions]
             # Create a tuple which unique identifies this interaction.
@@ -266,7 +270,7 @@ def track_specific_interactions_over_time(protein_protein_tracking, ion_surround
                     interaction_states[interaction].append(1)
                     # Add this interaction to a list of current interactions.
                     current_interactions.append(interaction)
-    
+
         # If an interaction that is being tracked is not present at this step, indicate that it does not exist
         # at this step.
         for interaction in interaction_states:
@@ -274,7 +278,8 @@ def track_specific_interactions_over_time(protein_protein_tracking, ion_surround
                 interaction_states[interaction].append(0)
     return interaction_states
 
-def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=None, xlabel='Frame'):
+
+def plot_heatmap(data_dict, title='Heatmap of Interaction Presence', time_series=None, xlabel='Frame'):
     """
     Generates a heatmap from a dictionary where each key corresponds to a list of 0's and 1's.
 
@@ -283,7 +288,7 @@ def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=
         title (string): Plot title. Default is 'Heatmap of Interaction Presence'.
         time_series (list like): A list or array that is the same length as the number of keys in data_dict. Default is None
         xlabel (string): x-axis label. Default is 'Frame'.
-        
+
     Returns:
         None: Displays a heatmap plot.
 
@@ -310,19 +315,19 @@ def plot_heatmap(data_dict,title='Heatmap of Interaction Presence', time_series=
     for i, key in enumerate(keys):
         for j, val in enumerate(values[i]):
             heatmap_data[i, j] = val
-    
+
     # Calculate column widths based on time series data
     if time_series is None:
         time_series = range(max_length)
 
     # Create a heatmap using seaborn
-    plt.figure(figsize=(10, len(keys)/5))
+    plt.figure(figsize=(10, len(keys) / 5))
     sns.heatmap(heatmap_data, annot=False, vmin=0, vmax=1, cmap='gray_r', cbar=False, xticklabels=time_series, yticklabels=keys, linewidths=1, linecolor='grey')
 
     # Create legend
     interaction_patch = mpatches.Patch(color='black', label='Interaction')
     no_interaction_patch = mpatches.Patch(color='white', label='No Interaction')
-    plt.legend(handles=[interaction_patch, no_interaction_patch], loc='right', bbox_to_anchor=(1.6, 0.5),facecolor='gray', fontsize=large_font)
+    plt.legend(handles=[interaction_patch, no_interaction_patch], loc='right', bbox_to_anchor=(1.6, 0.5), facecolor='gray', fontsize=large_font)
 
     # Rotate row labels to read horizontally
     plt.yticks(rotation=0)

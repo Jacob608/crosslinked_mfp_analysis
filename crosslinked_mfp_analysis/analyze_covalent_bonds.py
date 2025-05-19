@@ -1,24 +1,25 @@
 import pandas as pd
 import numpy as np
-import os 
+import os
 import matplotlib.pyplot as plt
+
 
 def process_broken_bonds(simulation_path):
     """
-    Processes files in a directory that match the pattern 'bb*.dat' and aggregates 
+    Processes files in a directory that match the pattern 'bb*.dat' and aggregates
     broken bond data into a single DataFrame.
 
-    This function searches the specified directory for files whose names start with 
-    'bb' and end with '.dat'. For each matching file, it reads the second column 
-    (index 1) of numerical data, assumed to represent the number of bond breaks, 
-    and adds it as a column to a cumulative DataFrame. The column name is derived 
+    This function searches the specified directory for files whose names start with
+    'bb' and end with '.dat'. For each matching file, it reads the second column
+    (index 1) of numerical data, assumed to represent the number of bond breaks,
+    and adds it as a column to a cumulative DataFrame. The column name is derived
     from the unique bond type indicated in the filename.
 
     Args:
     simulation_path (str): The path to the directory containing the '.dat' files.
 
     Returns:
-    pandas.DataFrame: A DataFrame where each column corresponds to a bond type 
+    pandas.DataFrame: A DataFrame where each column corresponds to a bond type
     and contains the number of breaks from the respective file.
     """
     broken_bonds_df = pd.DataFrame()
@@ -43,26 +44,27 @@ def process_broken_bonds(simulation_path):
 
     return broken_bonds_df
 
-def get_data_section_start_end(filepath, section, empty_lines_per_section=2, header_type = 'starts with'):
+
+def get_data_section_start_end(filepath, section, empty_lines_per_section=2, header_type='starts with'):
     """
     Read the LAMMPS data file specified by the filepath and return the indices of the first and final
     lines of the section specified. Also return the index of the last line in the file.
-    
+
     Args:
         filepath (string): Path to the LAMMPS data file.
-        section (string): This string must match exactly with the line that indicates the start of the 
+        section (string): This string must match exactly with the line that indicates the start of the
             desired section in the LAMMPS data file. ex. If the desired section is the 'Bond Coeffs' section,
             section must equal 'Bond Coeffs'.
         empty_lines_per_section (int): The number of empty lines that are in each section of the file. Default
             is 2, consistent with LAMMPS data file format.
         header_type (string): Indicates whether the section header contains the section string or starts with the section string.
             Options are 'starts with' or 'contains'. Default is 'starts with'.
-    
+
     Returns:
         start_ind (int): The index of the first line in the requested section.
         end_ind (int): The index of the last line in the requested section.
         final_ind (int): The index of the last line in the file.
-    
+
     Raises:
         ValueError: Invalid input for header type if header_type is not a recognized sring.
     """
@@ -100,6 +102,7 @@ def get_data_section_start_end(filepath, section, empty_lines_per_section=2, hea
                     break
     return start_ind, end_ind, final_ind
 
+
 def convert_types_to_labels(bondtype, data_file_path):
     """
     Convert a numeric bondtype to a meaningful label that specifies which alphanumeric atom types make up
@@ -115,12 +118,14 @@ def convert_types_to_labels(bondtype, data_file_path):
     # Get the indices for the start and end of the Bond Coeffs section as well as the number of lines.
     start, end, final = get_data_section_start_end(
         filepath=data_file_path,
-        section='Bond Coeffs'
-        )
+        section='Bond Coeffs')
     # Read ionized.data into a Pandas DataFrame, looking only at the Bond Coeffs section.
-    bond_coeffs = pd.read_csv(data_file_path,sep='\s+',\
-                              skiprows=list(range(0,start-1))+list(range(end + 1,final)),header=None,\
-                              names=['BondType','AtomType1','AtomType2'],usecols=[0,4,5])
+    bond_coeffs = pd.read_csv(data_file_path,
+                              sep=r'\s+',
+                              skiprows=list(range(0, start - 1)) + list(range(end + 1, final)),
+                              header=None,
+                              names=['BondType', 'AtomType1', 'AtomType2'],
+                              usecols=[0, 4, 5])
     # Filter the DataFrame bond_coeffs for values where column 'BondType' equals bondtype.
     # There should only be one.
     this_bond = bond_coeffs[bond_coeffs['BondType'] == bondtype].reset_index()
@@ -128,21 +133,22 @@ def convert_types_to_labels(bondtype, data_file_path):
     # If there is more than one row, raise an AssertionError
     try:
         assert this_bond.shape[0] == 1
-    except:
+    except AssertionError:
         if this_bond.shape[0] > 1:
             print("More than 1 bond of this type detected.")
         else:
             print("No bond of this type was detected.")
     # Access the atom types stored in the 'AtomType1' and 'AtomType2' columns of this_bond.
-    atom_type1 = this_bond.loc[0,'AtomType1']
-    atom_type2 = this_bond.loc[0,'AtomType2']
+    atom_type1 = this_bond.loc[0, 'AtomType1']
+    atom_type2 = this_bond.loc[0, 'AtomType2']
     label = f"type {bondtype}: {atom_type1}-{atom_type2}"
     return label
 
-def plot_bonds_broken_single_simulation(df,title=None, data_file_path=None, stress_df=None):
+
+def plot_bonds_broken_single_simulation(df, title=None, data_file_path=None, stress_df=None):
     """
     Plot the cumulative number of bonds broken of each time as a function of frame for a single simulation.
-    
+
     Args:
         df (DataFrame): A DataFrame where each column contains the cumulative number of bonds broken at each
             frame in the LAMMPS simulation. Output from bondbreak_data_to_df.
@@ -152,12 +158,10 @@ def plot_bonds_broken_single_simulation(df,title=None, data_file_path=None, stre
             to 'type int: alphanumericatomtype1-alphanumericatomtype2'
         stress_df (pandas.DataFrame): The dataframe output by the function crosslinked_mfp_analysis.crosslinked_mfp_analysis.
             stress_strain.read_stress_strain which is assumed to correspond to the same simulation as the bond breaking data.
-    
+
     Returns:
         Plot of all bond types that were broken throughout the simulation as a function of frame.
     """
-
-
     # Set default font size to 14
     plt.rcParams['font.size'] = 14
     fig, ax = plt.subplots()
@@ -165,24 +169,24 @@ def plot_bonds_broken_single_simulation(df,title=None, data_file_path=None, stre
     # If stress_df is passed, plot Stress versus frame on the secondary axis.
     if stress_df is not None:
         ax2 = ax.twinx()
-        ax2.plot(stress_df['Strain'], stress_df['Moving_Avg_Pzz (MPa)']/1000,c='purple')
-        ax2.set_ylabel('Stress (GPa)',c='purple')
-        x_data = stress_df.loc[:len(df)-1,'Strain'] + 0.19
+        ax2.plot(stress_df['Strain'], stress_df['Moving_Avg_Pzz (MPa)'] / 1000, c='purple')
+        ax2.set_ylabel('Stress (GPa)', c='purple')
+        x_data = stress_df.loc[:len(df) - 1, 'Strain'] + 0.19
     for col in df:
         # Only plot columns that contain at least 1 non-zero value.
         if df[col].sum() != 0:
             # If data_file_path is specified, create a new label for the legend.
             if data_file_path is not None:
-                label = convert_types_to_labels(bondtype=int(col.lstrip('type ')), data_file_path = data_file_path)
+                label = convert_types_to_labels(bondtype=int(col.lstrip('type ')), data_file_path=data_file_path)
             else:
                 label = col
-            ax.plot(x_data,df[col],label=label)
-
+            ax.plot(x_data, df[col], label=label)
     ax.set_title(title)
     ax.set_xlabel('Frame')
     ax.set_ylabel('Cumulative Number of Bonds Broken')
     ax.legend()
     plt.show()
+
 
 def identify_broken_bonds(pre_data_file, post_data_file, psf_file):
     """
@@ -215,42 +219,42 @@ def identify_broken_bonds(pre_data_file, post_data_file, psf_file):
         >>> broken_bonds_df = identify_broken_bonds("ionized.data", "tensile_test.data", "ionized.psf")
         >>> print(broken_bonds_df.head())
     """
-
-    column_names = ['BondID','BondType','AtomID1','AtomID2']
+    column_names = ['BondID', 'BondType', 'AtomID1', 'AtomID2']
     # Load the bond list from ionized.data into a DataFrame
     start, end, final = get_data_section_start_end(
         filepath=pre_data_file,
         section='Bonds')
     pre_break_bonds_df = pd.read_csv(pre_data_file,
-                                     sep='\s+',
-                                     usecols=[0,1,2,3],
-                                     skiprows=list(range(0,start-1)) + list(range(end+1,final)),
+                                     sep=r'\s+',
+                                     usecols=[0, 1, 2, 3],
+                                     skiprows=list(range(0, start - 1)) + list(range(end + 1, final)),
                                      header=None,
                                      names=column_names)
     # Load the bond list from tensile_test_strain_5.data into a DataFrame
     start, end, final = get_data_section_start_end(
         filepath=post_data_file,
         section='Bonds')
-    
+
     post_break_bonds_df = pd.read_csv(post_data_file,
-                                      sep='\s+',
-                                      usecols=[0,1,2,3],
-                                      skiprows=list(range(0,start-1)) + list(range(end+1,final)),
+                                      sep=r'\s+',
+                                      usecols=[0, 1, 2, 3],
+                                      skiprows=list(range(0, start - 1)) + list(range(end + 1, final)),
                                       header=None,
                                       names=column_names)
     # Perform an anti-join to return observations in ionized.data that are not intensile_test_strain_5.data.
     pre_post_break_df = pre_break_bonds_df.merge(post_break_bonds_df,
-                                                 on=['AtomID1','AtomID2'],
-                                                 how='outer',indicator=True,
-                                                 suffixes=('_pre','_post'))
+                                                 on=['AtomID1', 'AtomID2'],
+                                                 how='outer',
+                                                 indicator=True,
+                                                 suffixes=('_pre', '_post'))
     # Filter rows where only a left join could be achieved.
-    deleted_bonds_df = pre_post_break_df.loc[pre_post_break_df['_merge']=='left_only']
+    deleted_bonds_df = pre_post_break_df.loc[pre_post_break_df['_merge'] == 'left_only']
 
     # Remove Columns Only Containing NaN values and _merge column.
-    deleted_bonds_df = deleted_bonds_df.drop(columns=['BondID_post','BondType_post','_merge'])
+    deleted_bonds_df = deleted_bonds_df.drop(columns=['BondID_post', 'BondType_post', '_merge'])
 
     # Load atom list from psf file.
-    psf_atom_list_colnames = ['AtomID','SegName','ResID','ResName','AtomName','AtomTypeName']
+    psf_atom_list_colnames = ['AtomID', 'SegName', 'ResID', 'ResName', 'AtomName', 'AtomTypeName']
     start, end, final = get_data_section_start_end(
         filepath=psf_file,
         section='!NATOM',
@@ -258,34 +262,34 @@ def identify_broken_bonds(pre_data_file, post_data_file, psf_file):
         header_type='contains')
     print(start, end, final)
     psf_atom_list_df = pd.read_csv(psf_file,
-                                   sep='\s+',
-                                   usecols=[0,1,2,3,4,5],
-                                   skiprows=list(range(0,start-1))+list(range(end+1,final)),
+                                   sep=r'\s+',
+                                   usecols=[0, 1, 2, 3, 4, 5],
+                                   skiprows=list(range(0, start - 1)) + list(range(end + 1, final)),
                                    header=None,
                                    names=psf_atom_list_colnames)
     # Join psf_atom_list_df to deleted_bonds_df on a left join to add information about 'AtomID1' from 'ionized.psf'
-    deleted_bonds_resids_df = deleted_bonds_df.merge(psf_atom_list_df,how='left',left_on='AtomID1',right_on='AtomID')
-    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID','ResID'])
+    deleted_bonds_resids_df = deleted_bonds_df.merge(psf_atom_list_df, how='left', left_on='AtomID1', right_on='AtomID')
+    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID', 'ResID'])
     # Clean Up Column Names
-    new_col_dict1 = {'SegName':'AtomID1_SegName',
-                    'ResID':'AtomID1_ResID',
-                    'AtomType':'AtomID1_AtomType',
-                    'AtomTypeName':'AtomID1_AtomTypeName'}
-    deleted_bonds_resids_df.rename(columns=new_col_dict1,inplace=True)
+    new_col_dict1 = {'SegName': 'AtomID1_SegName',
+                     'ResID': 'AtomID1_ResID',
+                     'AtomType': 'AtomID1_AtomType',
+                     'AtomTypeName': 'AtomID1_AtomTypeName'}
+    deleted_bonds_resids_df.rename(columns=new_col_dict1, inplace=True)
 
     # Join psf_atom_list_df to deleted_bonds_df on a left join to add information about 'AtomID2' from 'ionized.psf'
-    deleted_bonds_resids_df = deleted_bonds_resids_df.merge(psf_atom_list_df,how='left',left_on='AtomID2',right_on='AtomID')
-    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID','ResID'])
+    deleted_bonds_resids_df = deleted_bonds_resids_df.merge(psf_atom_list_df, how='left', left_on='AtomID2', right_on='AtomID')
+    deleted_bonds_resids_df = deleted_bonds_resids_df.drop(columns=['AtomID', 'ResID'])
     # Clean Up Column Names
-    new_col_dict2 = {'SegName':'AtomID2_SegName',
-                    'ResID':'AtomID2_ResID',
-                    'AtomType':'AtomID2_AtomType',
-                    'AtomTypeName':'AtomID2_AtomTypeName',
-                    'BondID_pre':'BondID',
-                    'BondType_pre':'BondType'}
-    deleted_bonds_resids_df.rename(columns=new_col_dict2,inplace=True)
+    new_col_dict2 = {'SegName': 'AtomID2_SegName',
+                     'ResID': 'AtomID2_ResID',
+                     'AtomType': 'AtomID2_AtomType',
+                     'AtomTypeName': 'AtomID2_AtomTypeName',
+                     'BondID_pre': 'BondID',
+                     'BondType_pre': 'BondType'}
+    deleted_bonds_resids_df.rename(columns=new_col_dict2, inplace=True)
 
     # Remove more columns to make table more concise.
-    deleted_bonds_resids_trimmed = deleted_bonds_resids_df.drop(columns=['AtomName_x','AtomName_y'])
-    
+    deleted_bonds_resids_trimmed = deleted_bonds_resids_df.drop(columns=['AtomName_x', 'AtomName_y'])
+
     return deleted_bonds_resids_trimmed
