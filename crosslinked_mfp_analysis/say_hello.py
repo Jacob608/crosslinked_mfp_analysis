@@ -1,13 +1,14 @@
 def say_hello():
-	"""Function to practice writing correct docstrings in Google Style ahead of developing the actual package.
-	
-	Say hello.
+    """Function to practice writing correct docstrings in Google Style ahead
+    of developing the actual package.
 
-	Args:
-		None
+    Say hello.
 
-	Returns:
-		None. Prints the string 'Hello'.
-	"""
+    Args:
+        None
 
-	print('Hello')
+    Returns:
+        None. Prints the string 'Hello'.
+    """
+
+    print('Hello')
