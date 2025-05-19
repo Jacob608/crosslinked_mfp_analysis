@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>crosslinked_mfp_analysis.analyze_og312_surroundings &#8212; crosslinked_mfp_analysis 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for crosslinked_mfp_analysis.analyze_og312_surroundings</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="collect_og312_surroundings">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_og312_surroundings.collect_og312_surroundings">[docs]</a>
+<span class="k">def</span> <span class="nf">collect_og312_surroundings</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">resname</span><span class="o">=</span><span class="s1">&#39;DO2P&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    From a specified MDAnalysis universe, for each residue with residue name equal to the variable resname, get a list of the atoms that</span>
+<span class="sd">    are within a cutoff distance of the &#39;type OG312&#39; atoms on its sidechain. Return a list that contains</span>
+<span class="sd">    an element corresponding to each frame analyzed in the trajectory. Each list element is a dictionary with</span>
+<span class="sd">    keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: &#39;Atom Selection&#39;,</span>
+<span class="sd">    which holds the atom selection for the &#39;type OG312&#39; atoms in this residue, and &#39;Surroundings Selection&#39;, which holds the atom selection</span>
+<span class="sd">    for atoms within the cutoff distance of atoms in &#39;Atom Selection&#39; excluding &#39;type CA&#39; atoms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        universe (MDAnalysis Universe): trajectory for this simulation.</span>
+<span class="sd">        cutoff (float): The cutoff distance to be used to define nearby atoms.</span>
+<span class="sd">        step (int): Number of frames to skip between analyzed frames in the trajectory. Default is 100.</span>
+<span class="sd">        resname (string): String formatted residue name for the residue containing &#39;OG312&#39; atoms. Default is &#39;DO2P&#39;.</span>
+<span class="sd">        verbose (boolean): Specify whether print statements are output after each frame in the MDAnalysis object has been analyzed.</span>
+<span class="sd">            Default is True.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        og312_surrounding_atoms_each_frame (list): Each list element is a dictionary with</span>
+<span class="sd">        keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: &#39;Atom Selection&#39;,</span>
+<span class="sd">        which holds the atom selection for the &#39;type OG312&#39; atoms in this residue, and &#39;Surroundings Selection&#39;, which holds the atom selection</span>
+<span class="sd">        for atoms within the cutoff distance of atoms in &#39;Atom Selection&#39; excluding &#39;type CA&#39; atoms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">og312_surrounding_atoms_each_frame</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Iterate over the trajectory.</span>
+    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[::</span><span class="n">step</span><span class="p">]:</span>
+        <span class="c1"># Instantiate an empty dictionary to store a selection of nearby atoms for each residue.</span>
+        <span class="n">og312_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;resname </span><span class="si">{</span><span class="n">resname</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="c1"># Define a string to be used as the key for this dictionary entry in og312_dict.</span>
+            <span class="n">key_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">key_string</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">og312_dict</span><span class="p">:</span>
+                <span class="n">og312_dict</span><span class="p">[</span><span class="n">key_string</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="c1"># Make the atom selection for the OG312 atoms in this residue.</span>
+                <span class="n">og312_dict</span><span class="p">[</span><span class="n">key_string</span><span class="p">][</span><span class="s1">&#39;Atom Selection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;segid </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s1"> and resid </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s1"> and type OG312&#39;</span><span class="p">)</span>
+                <span class="c1"># Make an atom selection that specifies the atoms within cutoff distance of the OG312 atom selection. Exclude type CA, which is covalently bonded to each OG312.</span>
+                <span class="n">og312_dict</span><span class="p">[</span><span class="n">key_string</span><span class="p">][</span><span class="s1">&#39;Surroundings Selection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;not type CA and around </span><span class="si">{</span><span class="n">cutoff</span><span class="si">}</span><span class="s1"> segid </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s1"> and resid </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s1"> and type OG312&#39;</span><span class="p">)</span>
+        <span class="n">og312_surrounding_atoms_each_frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">og312_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Finished analyzing frame </span><span class="si">{</span><span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">frame</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">og312_surrounding_atoms_each_frame</span></div>
+
+
+
+<div class="viewcode-block" id="unique_og312_surroundings_frequency">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_og312_surroundings.unique_og312_surroundings_frequency">[docs]</a>
+<span class="k">def</span> <span class="nf">unique_og312_surroundings_frequency</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each unique set of atom types surrounding a group of atoms, make a list that specifies how many times</span>
+<span class="sd">    that unique set appears at each frame in the simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        surroundings_each_frame (list): Each list element is a dictionary with</span>
+<span class="sd">            keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: &#39;Atom Selection&#39;,</span>
+<span class="sd">            which holds the atom selection for the &#39;type OG312&#39; atoms in this residue, and &#39;Surroundings Selection&#39;, which holds the atom selection</span>
+<span class="sd">            for atoms within the cutoff distance of atoms in &#39;Atom Selection&#39; excluding &#39;type CA&#39; atoms. Same as output from collect_og312_surroundings.</span>
+<span class="sd">        verbose (boolean): Specify whether print statements are output after each list element in surroundings_each_frame has been analyzed.</span>
+<span class="sd">            Default is True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        environments_over_time (dictionary): A dictionary where each key is unique to a configuration of atoms around</span>
+<span class="sd">            an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms</span>
+<span class="sd">            appears around an ion in each frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Instantiate the dictionary to be returned.</span>
+    <span class="n">environments_over_time</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Iterate over the list of dictionaries containing atom selections within a cutoff distance of each ion.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">):</span>
+        <span class="c1"># Iterate over the keys in this entry of surroundings_each_frame.</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="c1"># Access and sort the atom selection surrounding this ion.</span>
+            <span class="n">atom_selection</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;Surroundings Selection&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">types</span><span class="p">)</span>
+
+            <span class="c1"># Make a dictionary key that is specific to this selection.</span>
+            <span class="c1"># If there are 1 OT, and 2 HT atoms with the cutoff distance,</span>
+            <span class="c1"># then the key is &quot;HT HT OT&quot;, which is the atom types concatenated</span>
+            <span class="c1"># as a string in alphabetical order.</span>
+            <span class="n">config_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_selection</span><span class="p">):</span>
+                <span class="n">config_key</span> <span class="o">=</span> <span class="n">config_key</span> <span class="o">+</span> <span class="n">entry</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_selection</span><span class="p">):</span>
+                    <span class="n">config_key</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+            <span class="c1"># If there are no atoms in the surroundings, make a special key.</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">config_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;none within cutoff&#39;</span>
+
+            <span class="c1"># Check if this configuration around an ion has been identified yet.</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="ow">in</span> <span class="n">environments_over_time</span><span class="p">:</span>
+                <span class="c1"># If so, add 1 to the value specifying how many times this configuration is observed in the ith frame.</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Create a numpy array of 0s and add 1 to the ith frame, where this configuration first appears.</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">))</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analyzed list element </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">environments_over_time</span></div>
+
+
+
+<div class="viewcode-block" id="count_atom_types_around_og312_over_time">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_og312_surroundings.count_atom_types_around_og312_over_time">[docs]</a>
+<span class="k">def</span> <span class="nf">count_atom_types_around_og312_over_time</span><span class="p">(</span><span class="n">og312_surroundings</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count how many times each atom type is within the cutoff distance of an og312 atom at each frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        og312_surroundings (list): Each list element is a dictionary with</span>
+<span class="sd">        keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: &#39;Atom Selection&#39;,</span>
+<span class="sd">        which holds the atom selection for the &#39;type OG312&#39; atoms in this residue, and &#39;Surroundings Selection&#39;, which holds the atom selection</span>
+<span class="sd">        for atoms within the cutoff distance of atoms in &#39;Atom Selection&#39; excluding &#39;type CA&#39; atoms.</span>
+<span class="sd">        verbose (boolean): If verbose, print an updated message every time a frame is analyzed. Default is True.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        types_dict (dictionary): A dictionary where each key is an atom type, and the corresponding value for each</span>
+<span class="sd">            key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize a dictionary to store type information.</span>
+    <span class="n">types_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Loop through frames in og312_surroundings.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">og312_surroundings</span><span class="p">):</span>
+        <span class="c1"># Loop through the resids of each ion.</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="c1"># Loop through each atom type in the atom selection around this ion.</span>
+            <span class="k">for</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;Surroundings Selection&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">types</span><span class="p">:</span>
+                <span class="c1"># Check if this atom type is already in types_dict.</span>
+                <span class="k">if</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">types_dict</span><span class="p">:</span>
+                    <span class="c1"># Add 1 to the counter indicating how many times this atom type is within the cutoff distance in the ith frame.</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">og312_surroundings</span><span class="p">))</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Analyzed frame </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">types_dict</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">crosslinked_mfp_analysis</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Jacob Graham.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
