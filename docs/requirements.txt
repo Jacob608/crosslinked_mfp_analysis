@@ -40,6 +40,7 @@ roman-numerals-py==3.1.0
 scikit-learn==1.6.1
 scipy==1.15.3
 seaborn==0.13.2
+setuptools==80.8.0
 six==1.17.0
 snowballstemmer==3.0.1
 soupsieve==2.7
