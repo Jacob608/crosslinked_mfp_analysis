@@ -21,13 +21,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_autodoc_typehints',
-    'sphinx_rtd_theme',
-    'sphinxcontrib.googleanalytics'
+    'sphinx_rtd_theme'
 ]
-
-# Set the tracking ID for sphinxcontrib.googleanalytics
-googleanalytics_id = 'G-XXXXXXXXXX'
-googleanalytics_enabled = True
 
 # Optional: configure napoleon
 
@@ -73,7 +68,7 @@ html_theme_options = {
 }
 
 # Add custom CSS
-html_css_files = ['custom.css']
+# html_css_files = ['custom.css']
 
 # Add logo and favicon
 html_logo = "_static/logo.png"
