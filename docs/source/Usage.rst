@@ -1,11 +1,14 @@
 
-crosslinked_mfp_analysis
+Analyze Covalent Bonds
 =========================
 
 .. automodule:: crosslinked_mfp_analysis.analyze_covalent_bonds
    :members:
    :undoc-members:
    :show-inheritance:
+
+Analyze Ion Coordination Bonds
+=========================
 
 .. automodule:: crosslinked_mfp_analysis.analyze_ion_coordination_bonds
    :members:
