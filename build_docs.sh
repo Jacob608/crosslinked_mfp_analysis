@@ -9,7 +9,7 @@ OUTPUT_DIR="docs"
 echo "Cleaning old HTML files in $OUTPUT_DIR..."
 find "$OUTPUT_DIR" -maxdepth 1 -type f -name '*.html' -delete
 rm -rf "$OUTPUT_DIR/_static" "$OUTPUT_DIR/_sources" "$OUTPUT_DIR/genindex.html" "$OUTPUT_DIR/objects.inv" "$OUTPUT_DIR/search.html" "$OUTPUT_DIR/searchindex.js"
-
+rm -rf "$BUILD_DIR"
 # Build the docs
 echo "Building documentation..."
 sphinx-build -b html "$SOURCE_DIR" "$BUILD_DIR"
