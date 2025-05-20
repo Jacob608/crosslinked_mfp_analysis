@@ -36,8 +36,6 @@ napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
 
-
-
 templates_path = ['_templates']
 exclude_patterns = []
 
@@ -52,4 +50,3 @@ html_static_path = ['_static']
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
-

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>crosslinked_mfp_analysis.analyze_ion_coordination_bonds &#8212; crosslinked_mfp_analysis 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for crosslinked_mfp_analysis.analyze_ion_coordination_bonds</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+
+
+<div class="viewcode-block" id="generate_combinations">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_combinations</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all possible combinations of elements in the input list.</span>
+
+<span class="sd">    This function generates a list of tuples containing every possible combination</span>
+<span class="sd">    of lengths from 2 to N (where N is the length of the input list) for a given list</span>
+<span class="sd">    of string elements.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (list of str): A list of string elements.</span>
+<span class="sd">        min_length (int): The minimum length of a combination.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list of tuple: A list of tuples, each containing a combination of elements</span>
+<span class="sd">        from the input list.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; input_list = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; generate_combinations(input_list)</span>
+<span class="sd">        [(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;d&#39;), (&#39;b&#39;, &#39;c&#39;), (&#39;b&#39;, &#39;d&#39;), (&#39;c&#39;, &#39;d&#39;),</span>
+<span class="sd">         (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;b&#39;, &#39;d&#39;), (&#39;a&#39;, &#39;c&#39;, &#39;d&#39;), (&#39;b&#39;, &#39;c&#39;, &#39;d&#39;),</span>
+<span class="sd">         (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+    <span class="k">if</span> <span class="n">min_length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">min_length</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_length</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">combinations</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="get_characters_after_last_colon">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon">[docs]</a>
+<span class="k">def</span> <span class="nf">get_characters_after_last_colon</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract all characters after the last colon &#39;:&#39; in the input string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_string (str): The input string containing one or more colons.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A substring containing all characters after the last colon.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^:]*$&#39;</span><span class="p">,</span> <span class="n">input_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="protein_protein_ion_coordination">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination">[docs]</a>
+<span class="k">def</span> <span class="nf">protein_protein_ion_coordination</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">non_protein</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CLA&quot;</span><span class="p">,</span> <span class="s2">&quot;FE3P&quot;</span><span class="p">,</span> <span class="s2">&quot;HT&quot;</span><span class="p">,</span> <span class="s2">&quot;OT&quot;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction</span>
+<span class="sd">    facilitated by the ion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion.</span>
+<span class="sd">        non_protein (list): A list of all of the atom types in this system that are not protein formatted as strings.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of</span>
+<span class="sd">            ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make a list to store protein-protein interactions over time.</span>
+    <span class="n">protein_protein_tracking</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Iterate through each frame in ion_surrounding_atoms_each_frame.</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">):</span>
+        <span class="c1"># Instantiate a list to store the keys for ions that are mediating protein-protein interactions</span>
+        <span class="c1"># at this frame.</span>
+        <span class="n">frame_protein_protein_tracking</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Iterate through each ion in the current frame.</span>
+        <span class="k">for</span> <span class="n">ion</span><span class="p">,</span> <span class="n">nearby_atoms</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Instantiate a dictionary to store resids of atoms that are protein.</span>
+            <span class="n">unique_protein_residues</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Iterate over all of the atoms in the atomselection of this ion&#39;s surroundings.</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="p">:</span>
+                <span class="c1"># Verify that the type of this atom is not in the list of non-protein atom types.</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">non_protein</span><span class="p">:</span>
+                    <span class="c1"># Create a unique residue identifier from resid and segid for this atom.</span>
+                    <span class="n">residue_identifier</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                    <span class="c1"># Check if this resid and segid combination is a new residue.</span>
+                    <span class="k">if</span> <span class="n">residue_identifier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_protein_residues</span><span class="p">:</span>
+                        <span class="n">unique_protein_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue_identifier</span><span class="p">)</span>
+            <span class="c1"># Check if the ion is interacting wtih 2+ different protein residues.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_protein_residues</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">frame_protein_protein_tracking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ion</span><span class="p">)</span>
+        <span class="c1"># Append the list for this frame to the list tracking the whole trajectory.</span>
+        <span class="n">protein_protein_tracking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame_protein_protein_tracking</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">protein_protein_tracking</span></div>
+
+
+
+<div class="viewcode-block" id="ion_coordination">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination">[docs]</a>
+<span class="k">def</span> <span class="nf">ion_coordination</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction</span>
+<span class="sd">    between requested atom types in atom_types list facilitated by the ions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion.</span>
+<span class="sd">        atom_types (list): A list of atom types in string format to look for around iron atoms.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of</span>
+<span class="sd">            ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make a list to store protein-protein interactions over time.</span>
+    <span class="n">protein_protein_tracking</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Iterate through each frame in ion_surrounding_atoms_each_frame.</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">):</span>
+        <span class="c1"># Instantiate a list to store the keys for ions that are mediating protein-protein interactions</span>
+        <span class="c1"># at this frame.</span>
+        <span class="n">frame_protein_protein_tracking</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Iterate through each ion in the current frame.</span>
+        <span class="k">for</span> <span class="n">ion</span><span class="p">,</span> <span class="n">nearby_atoms</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Instantiate a dictionary to store resids of atoms that are protein.</span>
+            <span class="n">unique_protein_residues</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Check if all of the atoms in atom_types are found in this ion&#39;s surroundings.</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">atom_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="o">.</span><span class="n">types</span><span class="p">:</span>
+                    <span class="n">check</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">break</span>
+            <span class="c1"># If all of the atoms in atom_types are found in this ion&#39;s surroundings, check if it is a protein-protein interaction.</span>
+            <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
+                <span class="c1"># Iterate over all of the atoms in the atomselection of this ion&#39;s surroundings.</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="p">:</span>
+                    <span class="c1"># Verify that the type of this atom is not in the list of non-protein atom types.</span>
+                    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
+                        <span class="c1"># Create a unique residue identifier from resid and segid for this atom.</span>
+                        <span class="n">residue_identifier</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                        <span class="c1"># Check if this resid and segid combination is a new residue.</span>
+                        <span class="k">if</span> <span class="n">residue_identifier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_protein_residues</span><span class="p">:</span>
+                            <span class="n">unique_protein_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue_identifier</span><span class="p">)</span>
+            <span class="c1"># Check if the ion is interacting with at least 2 different protein residues.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_protein_residues</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">frame_protein_protein_tracking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ion</span><span class="p">)</span>
+        <span class="c1"># Append a the list for this frame to the list tracking the whole trajectory.</span>
+        <span class="n">protein_protein_tracking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame_protein_protein_tracking</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">protein_protein_tracking</span></div>
+
+
+
+<div class="viewcode-block" id="track_protein_protein_interactions_over_time">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time">[docs]</a>
+<span class="k">def</span> <span class="nf">track_protein_protein_interactions_over_time</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">,</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">non_protein</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CLA&quot;</span><span class="p">,</span> <span class="s2">&quot;FE3P&quot;</span><span class="p">,</span> <span class="s2">&quot;HT&quot;</span><span class="p">,</span> <span class="s2">&quot;OT&quot;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.</span>
+<span class="sd">    0 means the interaction is not present at this timestep. 1 means it is.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of</span>
+<span class="sd">            ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format</span>
+<span class="sd">            as output by the functions protein_protein_ion_coordination and ion_coordination.</span>
+<span class="sd">        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion.</span>
+<span class="sd">        non_protein (list): A list of all of the atom types in this system that are not protein formatted as strings.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        interaction_states (dictionary): A dictionary where keys specify which interaction this is. Value is a list, where each</span>
+<span class="sd">            entry is a boolean indicating whether or not this interaction is present at this timestep.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Instantiate an empty dictionary to store interaction information.</span>
+    <span class="n">interaction_states</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Iterate through the list of ions that are facilitating interactions at each frame.</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">ions</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">):</span>
+        <span class="c1"># Create a set to store residue pairs that are interacting at this time step</span>
+        <span class="n">current_interactions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Iterate through each ion and make a set from the unique protein residues around it.</span>
+        <span class="k">for</span> <span class="n">ion</span> <span class="ow">in</span> <span class="n">ions</span><span class="p">:</span>
+            <span class="c1"># Access the surroundings of this ion at this frame.</span>
+            <span class="n">nearby_atoms</span> <span class="o">=</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">ion</span><span class="p">]</span>
+
+            <span class="c1"># Make a list of unique protein residues surrounding this ion.</span>
+            <span class="n">unique_protein_residues</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="p">:</span>
+                <span class="n">segid_resid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resname</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">non_protein</span> <span class="ow">and</span> <span class="n">segid_resid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_protein_residues</span><span class="p">:</span>
+                    <span class="n">unique_protein_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segid_resid</span><span class="p">)</span>
+            <span class="c1"># Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="n">generate_combinations</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unique_protein_residues</span><span class="p">))</span>
+            <span class="c1"># Add an element to the beginning of each tuple in interactions which specifies which ion is facilitating these interactions.</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">ion</span><span class="p">),</span> <span class="o">*</span><span class="n">interaction</span><span class="p">)</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interactions</span><span class="p">]</span>
+            <span class="c1"># Create a tuple which unique identifies this interaction.</span>
+            <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interactions</span><span class="p">:</span>
+                <span class="c1"># Check if this unique interaction is already being tracked in interaction_states.</span>
+                <span class="k">if</span> <span class="n">interaction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">interaction_states</span><span class="p">:</span>
+                    <span class="c1"># Add this interaction interaction states, specifying false for all previous frames.</span>
+                    <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span>
+                <span class="c1"># Indicate that this interaction exists at the current frame.</span>
+                <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># Add this interaction to a list of current interactions.</span>
+                <span class="n">current_interactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
+
+        <span class="c1"># If an interaction that is being tracked is not present at this step, indicate that it does not exist</span>
+        <span class="c1"># at this step.</span>
+        <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interaction_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interaction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_interactions</span><span class="p">:</span>
+                <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">interaction_states</span></div>
+
+
+
+<div class="viewcode-block" id="track_specific_interactions_over_time">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time">[docs]</a>
+<span class="k">def</span> <span class="nf">track_specific_interactions_over_time</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">,</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.</span>
+<span class="sd">    0 means the interaction is not present at this timestep. 1 means it is.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        protein_protein_tracking (list): Each list element is a list of the keys found in the corresponding list element of</span>
+<span class="sd">            ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format</span>
+<span class="sd">            as output by the functions protein_protein_ion_coordination and ion_coordination.</span>
+<span class="sd">        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion.</span>
+<span class="sd">        atom_types (list): A list of atom types in string format to look for around iron atoms.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        interaction_states (dictionary): A dictionary where keys specify which interaction this is. Value is a list, where each</span>
+<span class="sd">            entry is a boolean indicating whether or not this interaction is present at this timestep.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Instantiate an empty dictionary to store interaction information.</span>
+    <span class="n">interaction_states</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Iterate through the list of ions that are facilitating interactions at each frame.</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">ions</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">):</span>
+        <span class="c1"># Create a set to store residue pairs that are interacting at this time step</span>
+        <span class="n">current_interactions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Iterate through each ion and make a set from the unique protein residues around it.</span>
+        <span class="k">for</span> <span class="n">ion</span> <span class="ow">in</span> <span class="n">ions</span><span class="p">:</span>
+            <span class="c1"># Access the surroundings of this ion at this frame.</span>
+            <span class="n">nearby_atoms</span> <span class="o">=</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">ion</span><span class="p">]</span>
+
+            <span class="c1"># Make a list of unique protein residues surrounding this ion.</span>
+            <span class="n">unique_protein_residues</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="p">:</span>
+                <span class="n">segid_resid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">segid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">resname</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">atom_types</span> <span class="ow">and</span> <span class="n">segid_resid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_protein_residues</span><span class="p">:</span>
+                    <span class="n">unique_protein_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segid_resid</span><span class="p">)</span>
+            <span class="c1"># Create a list of tuples which indicates all protein-protein interactions facilitated by this ion.</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="n">generate_combinations</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unique_protein_residues</span><span class="p">),</span> <span class="n">min_length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_types</span><span class="p">))</span>
+            <span class="c1"># Add an element to the beginning of each tuple in interactions which specifies which ion is facilitating these interactions.</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">ion</span><span class="p">),</span> <span class="o">*</span><span class="n">interaction</span><span class="p">)</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interactions</span><span class="p">]</span>
+            <span class="c1"># Create a tuple which unique identifies this interaction.</span>
+            <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interactions</span><span class="p">:</span>
+                <span class="c1"># Filter interactions to make sure each one has all atom types in the list.</span>
+                <span class="n">check</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">for</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
+                    <span class="c1"># Parse the values in this interaction</span>
+                    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_characters_after_last_colon</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span> <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">interaction</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">atom_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                        <span class="n">check</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">break</span>
+                <span class="c1"># If all requested atom types are found in this interaction, do the following.</span>
+                <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
+                    <span class="c1"># Check if this unique interaction is already being tracked in interaction_states.</span>
+                    <span class="k">if</span> <span class="n">interaction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">interaction_states</span><span class="p">:</span>
+                        <span class="c1"># Add this interaction interaction states, specifying false for all previous frames.</span>
+                        <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span>
+                    <span class="c1"># Indicate that this interaction exists at the current frame.</span>
+                    <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="c1"># Add this interaction to a list of current interactions.</span>
+                    <span class="n">current_interactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
+
+        <span class="c1"># If an interaction that is being tracked is not present at this step, indicate that it does not exist</span>
+        <span class="c1"># at this step.</span>
+        <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interaction_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interaction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_interactions</span><span class="p">:</span>
+                <span class="n">interaction_states</span><span class="p">[</span><span class="n">interaction</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">interaction_states</span></div>
+
+
+
+<div class="viewcode-block" id="plot_heatmap">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_heatmap</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Heatmap of Interaction Presence&#39;</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Frame&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a heatmap from a dictionary where each key corresponds to a list of 0&#39;s and 1&#39;s.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dict (dict): A dictionary where keys are row labels and values are lists of 0&#39;s and 1&#39;s.</span>
+<span class="sd">        title (string): Plot title. Default is &#39;Heatmap of Interaction Presence&#39;.</span>
+<span class="sd">        time_series (list like): A list or array that is the same length as the number of keys in data_dict. Default is None</span>
+<span class="sd">        xlabel (string): x-axis label. Default is &#39;Frame&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: Displays a heatmap plot.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        data_dict = {</span>
+<span class="sd">            &#39;Row1&#39;: [0, 1, 0, 1],</span>
+<span class="sd">            &#39;Row2&#39;: [1, 0, 1, 0],</span>
+<span class="sd">            &#39;Row3&#39;: [0, 0, 1, 1]</span>
+<span class="sd">        }</span>
+<span class="sd">        plot_heatmap(data_dict)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">large_font</span> <span class="o">=</span> <span class="mi">24</span>
+    <span class="c1"># Convert dictionary to a 2D numpy array</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># Determine the maximum length of the lists in the dictionary</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Create a 2D array with the same number of rows as keys and columns as max_length</span>
+    <span class="n">heatmap_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">max_length</span><span class="p">))</span>
+
+    <span class="c1"># Fill the 2D array with the values from the dictionary</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">heatmap_data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="c1"># Calculate column widths based on time series data</span>
+    <span class="k">if</span> <span class="n">time_series</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_series</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">)</span>
+
+    <span class="c1"># Create a heatmap using seaborn</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">heatmap_data</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="n">time_series</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create legend</span>
+    <span class="n">interaction_patch</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Interaction&#39;</span><span class="p">)</span>
+    <span class="n">no_interaction_patch</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;No Interaction&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">interaction_patch</span><span class="p">,</span> <span class="n">no_interaction_patch</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">large_font</span><span class="p">)</span>
+
+    <span class="c1"># Rotate row labels to read horizontally</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set labels and title</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">large_font</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Interactions&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">large_font</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">large_font</span><span class="p">)</span>
+
+    <span class="c1"># Show the plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">crosslinked_mfp_analysis</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Jacob Graham.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
