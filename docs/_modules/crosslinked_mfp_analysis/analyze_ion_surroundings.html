@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>crosslinked_mfp_analysis.analyze_ion_surroundings &mdash; crosslinked_mfp_analysis 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            crosslinked_mfp_analysis
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">crosslinked_mfp_analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">crosslinked_mfp_analysis.analyze_ion_surroundings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for crosslinked_mfp_analysis.analyze_ion_surroundings</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Functions related to analysis of ionic crosslink formation and breaking.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">distinctipy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="make_timeseries">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_timeseries</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="n">dumpfreqs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a numpy array that contains the time in femtoseconds corresponding to each frame in a simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        durations (list): Each entry is the total number of timesteps in a dcd file.</span>
+<span class="sd">        dumpfreqs (list): Each entry is the number of timesteps between each output frame.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        time (np.array): Each element in time represents the time in real units corresponding to each frame</span>
+<span class="sd">            in the trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make the timeseries for the first trajectory.</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">durations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dumpfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dumpfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Add the timeseries data for the remaining trajectories.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">durations</span><span class="p">)):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dumpfreqs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">durations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">dumpfreqs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dumpfreqs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">time</span></div>
+
+
+
+<div class="viewcode-block" id="collect_ion_surroundings">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_ion_surroundings</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">ion_type</span><span class="o">=</span><span class="s1">&#39;FE3P&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a list of dictionaries to store the surroundings of each ion within the specified cutoff distance</span>
+<span class="sd">    at each frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        universe (MDAnalysis Universe): trajectory for this simulation.</span>
+<span class="sd">        cutoff (float): The cutoff distance to be used to make interaction lists with ions.</span>
+<span class="sd">        ion_type (string): The atom type as it appears in the psf file used to make the universe.</span>
+<span class="sd">        step (int): Number of frames to skip between analyzed frames in the trajectory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ion_surrounding_atoms_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Instantiate the list to store ion surroundings at each frame.</span>
+    <span class="n">ion_surrounding_atoms_each_frame</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Iterate over the frames in the trajectory.</span>
+    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[::</span><span class="n">step</span><span class="p">]:</span>
+        <span class="c1"># Instantiate a dictionary to store the surrounding atom information for each ion during this frame.</span>
+        <span class="n">ion_surrounding_atoms</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Iterate over each ion.</span>
+        <span class="k">for</span> <span class="n">ion_atom</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type </span><span class="si">{</span><span class="n">ion_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="c1"># Find atoms within the cutoff distance of the current ion.</span>
+            <span class="n">nearby_atoms</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;around </span><span class="si">{</span><span class="n">cutoff</span><span class="si">}</span><span class="s1"> index </span><span class="si">{</span><span class="n">ion_atom</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># Store the surrounding atom information in a dictionary.</span>
+            <span class="n">ion_surrounding_atoms</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ion_atom</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nearby_atoms</span>
+
+        <span class="c1"># Append this dictionary to the list of frames being analyzed.</span>
+        <span class="n">ion_surrounding_atoms_each_frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ion_surrounding_atoms</span><span class="p">)</span>
+
+        <span class="c1"># Plot progress updates.</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Finished analyzing frame </span><span class="si">{</span><span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">frame</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ion_surrounding_atoms_each_frame</span></div>
+
+
+
+<div class="viewcode-block" id="unique_surroundings_frequency">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unique_surroundings_frequency</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each unique set of atom types surrounding a certain atom, make a list that specifies how many times</span>
+<span class="sd">    that unique set appears at each frame in the simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        surroundings_each_frame (list): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion. Has the same format as the output of collect_iron_surroundings.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        environments_over_time (dictionary): A dictionary where each key is unique to a configuration of atoms around</span>
+<span class="sd">            an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms</span>
+<span class="sd">            appears around an ion in each frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Instantiate the dictionary to be returned.</span>
+    <span class="n">environments_over_time</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Iterate over the list of dictionaries containing atom selections within a cutoff distance of each ion.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">):</span>
+
+        <span class="c1"># Iterate over the keys in this entry of surroundings_each_frame.</span>
+        <span class="k">for</span> <span class="n">resid</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="c1"># Access and sort the atom selection surrounding this ion.</span>
+            <span class="n">atom_selection</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">resid</span><span class="p">]</span><span class="o">.</span><span class="n">types</span><span class="p">)</span>
+
+            <span class="c1"># Make a dictionary key that is specific to this selection.</span>
+            <span class="c1"># If there are 1 OT, and 2 HT atoms with the cutoff distance,</span>
+            <span class="c1"># then the key is &quot;HT HT OT&quot;, which is the atom types concatenated</span>
+            <span class="c1"># as a string in alphabetical order.</span>
+            <span class="n">config_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_selection</span><span class="p">):</span>
+                <span class="n">config_key</span> <span class="o">=</span> <span class="n">config_key</span> <span class="o">+</span> <span class="n">entry</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_selection</span><span class="p">):</span>
+                    <span class="n">config_key</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+            <span class="c1"># If there are no atoms in the surroundings, make a special key.</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">config_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;none within cutoff&#39;</span>
+
+            <span class="c1"># Check if this configuration around an ion has been identified yet.</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="ow">in</span> <span class="n">environments_over_time</span><span class="p">:</span>
+                <span class="c1"># If so, add 1 to the value specifying how many times this configuration is observed in the ith frame.</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Create a numpy array of 0s and add 1 to the ith frame, where this configuration first appears.</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">))</span>
+                <span class="n">environments_over_time</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analyzed list element </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">environments_over_time</span></div>
+
+
+
+<div class="viewcode-block" id="sort_and_plot_unique_surroundings">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_and_plot_unique_surroundings</span><span class="p">(</span><span class="n">environments_over_time</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">timeseries</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_entries</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a plot counting the number of times each unique environment appears at each frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        environments_over_time (dictionary): A dictionary where each key is unique to a configuration of atoms around</span>
+<span class="sd">            an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms</span>
+<span class="sd">            appears around an ion in each frame. Same as the output from unique_surroundings_frequency.</span>
+<span class="sd">        cutoff (float): The cutoff distance used to get ion surroundings.</span>
+<span class="sd">        timeseries (list like): The timeseries data corresponding to this simulation.</span>
+<span class="sd">        title (string): Suptitle to be displayed over the plot.</span>
+<span class="sd">        step (int): Number of frames that were skipped between analyzed frames in the trajectory, when</span>
+<span class="sd">            running the function collect_ion_surroundings.</span>
+<span class="sd">        max_entries (int): Specifies the maximum number of data series to be included in the plot.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort the data series based on the maximum value in each series.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Ignore the first n frames when sorting by maximum number of occurences of each environment.</span>
+    <span class="n">sorted_environment_over_time</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">environments_over_time</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">:]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Generate distinct colors for each series.</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">distinctipy</span><span class="o">.</span><span class="n">get_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_environment_over_time</span><span class="p">))</span>
+
+    <span class="c1"># Plot each environment over time.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">series</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_environment_over_time</span><span class="p">[:</span><span class="n">max_entries</span><span class="p">]):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeseries</span><span class="p">[::</span><span class="n">step</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Customize plot properties.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unique Contact Sets within </span><span class="si">{</span><span class="n">cutoff</span><span class="si">}</span><span class="s1"> $</span><span class="se">\\</span><span class="s1">AA$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Contacts&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (ns)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="count_atom_types_around_ion_over_time">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_atom_types_around_ion_over_time</span><span class="p">(</span><span class="n">ion_surroundings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count how many times each atom type is within the cutoff distance of an ion at each frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ion_surroundings (dictionary): Each list element is a dictionary with keys specifying each ion&#39;s</span>
+<span class="sd">            residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff</span>
+<span class="sd">            distance of the ion. Same as output of collect_iron_surroundings.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        types_dict (dictionary): A dictionary where each key is an atom type, and the corresponding value for each</span>
+<span class="sd">            key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize a dictionary to store type information.</span>
+    <span class="n">types_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Loop through frames in ion_surroundings.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ion_surroundings</span><span class="p">):</span>
+        <span class="c1"># Loop through the resids of each ion.</span>
+        <span class="k">for</span> <span class="n">resid</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="c1"># Loop through each atom type in the atom selection around this ion.</span>
+            <span class="k">for</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="n">resid</span><span class="p">]</span><span class="o">.</span><span class="n">types</span><span class="p">:</span>
+                <span class="c1"># Check if this atom type is already in types_dict.</span>
+                <span class="k">if</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">types_dict</span><span class="p">:</span>
+                    <span class="c1"># Add 1 to the counter indicating how many times this atom type is within the cutoff distance in the ith frame.</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ion_surroundings</span><span class="p">))</span>
+                    <span class="n">types_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">types_dict</span></div>
+
+
+
+<div class="viewcode-block" id="plot_counts_of_atom_types_around_ion">
+<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_counts_of_atom_types_around_ion</span><span class="p">(</span><span class="n">types_dict</span><span class="p">,</span> <span class="n">timeseries</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a plot of the number of times each atom type is within the cutoff distance of an ion over time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        types_dict (dictionary): A dictionary where each key is an atom type, and the corresponding value for each</span>
+<span class="sd">            key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.</span>
+<span class="sd">            Same as the output of count_atom_types_around_ion_over_time.</span>
+<span class="sd">        timeseries (list like): The timeseries data corresponding to this simulation.</span>
+<span class="sd">        title (string): Suptitle to be displayed over the plot.</span>
+<span class="sd">        normalize (boolean): Indicates whether to normalize type counts by the number of total ions in the system.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort the data series based on the maximum value in each series.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Ignore the first n frames when sorting by maximum number of occurences of each environment.</span>
+    <span class="n">sorted_types_dict</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">types_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">:]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Generate distinct colors for each series.</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">distinctipy</span><span class="o">.</span><span class="n">get_colors</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_types_dict</span><span class="p">))</span>
+
+    <span class="c1"># Plot each environment over time.</span>
+    <span class="n">max_plots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_types_dict</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">series</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_types_dict</span><span class="p">[:</span><span class="n">max_plots</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">series</span> <span class="o">/</span> <span class="mi">160</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeseries</span><span class="p">[::</span><span class="mi">100</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (ns)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Count of Atom Types within Cutoff&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Count&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jacob Graham.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

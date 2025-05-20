@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>crosslinked_mfp_analysis &mdash; crosslinked_mfp_analysis 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="crosslinked_mfp_analysis documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            crosslinked_mfp_analysis
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">crosslinked_mfp_analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.convert_types_to_labels"><code class="docutils literal notranslate"><span class="pre">convert_types_to_labels()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.get_data_section_start_end"><code class="docutils literal notranslate"><span class="pre">get_data_section_start_end()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.identify_broken_bonds"><code class="docutils literal notranslate"><span class="pre">identify_broken_bonds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.plot_bonds_broken_single_simulation"><code class="docutils literal notranslate"><span class="pre">plot_bonds_broken_single_simulation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.process_broken_bonds"><code class="docutils literal notranslate"><span class="pre">process_broken_bonds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations"><code class="docutils literal notranslate"><span class="pre">generate_combinations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon"><code class="docutils literal notranslate"><span class="pre">get_characters_after_last_colon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination"><code class="docutils literal notranslate"><span class="pre">ion_coordination()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_heatmap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination"><code class="docutils literal notranslate"><span class="pre">protein_protein_ion_coordination()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time"><code class="docutils literal notranslate"><span class="pre">track_protein_protein_interactions_over_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time"><code class="docutils literal notranslate"><span class="pre">track_specific_interactions_over_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings"><code class="docutils literal notranslate"><span class="pre">collect_ion_surroundings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time"><code class="docutils literal notranslate"><span class="pre">count_atom_types_around_ion_over_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries"><code class="docutils literal notranslate"><span class="pre">make_timeseries()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion"><code class="docutils literal notranslate"><span class="pre">plot_counts_of_atom_types_around_ion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings"><code class="docutils literal notranslate"><span class="pre">sort_and_plot_unique_surroundings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency"><code class="docutils literal notranslate"><span class="pre">unique_surroundings_frequency()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.collect_og312_surroundings"><code class="docutils literal notranslate"><span class="pre">collect_og312_surroundings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.count_atom_types_around_og312_over_time"><code class="docutils literal notranslate"><span class="pre">count_atom_types_around_og312_over_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.unique_og312_surroundings_frequency"><code class="docutils literal notranslate"><span class="pre">unique_og312_surroundings_frequency()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.say_hello.say_hello"><code class="docutils literal notranslate"><span class="pre">say_hello()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.stress_strain.elastic_modulus"><code class="docutils literal notranslate"><span class="pre">elastic_modulus()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crosslinked_mfp_analysis.stress_strain.read_stress_strain"><code class="docutils literal notranslate"><span class="pre">read_stress_strain()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">crosslinked_mfp_analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">crosslinked_mfp_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/crosslinked_mfp_analysis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-crosslinked_mfp_analysis.analyze_covalent_bonds">
+<span id="crosslinked-mfp-analysis"></span><h1>crosslinked_mfp_analysis<a class="headerlink" href="#module-crosslinked_mfp_analysis.analyze_covalent_bonds" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_covalent_bonds.convert_types_to_labels">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_covalent_bonds.</span></span><span class="sig-name descname"><span class="pre">convert_types_to_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bondtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_covalent_bonds.html#convert_types_to_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.convert_types_to_labels" title="Link to this definition"></a></dt>
+<dd><p>Convert a numeric bondtype to a meaningful label that specifies which alphanumeric atom types make up
+this bond.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bondtype</strong> (<em>int</em>) – Numeric bondtype to be assigned a label.</p></li>
+<li><p><strong>data_file_path</strong> (<em>str</em>) – Path to the data file that contains properly labeled Bond Coeffs section.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Both atom types participating in this bond are connected by a hyphen.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>label (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_covalent_bonds.get_data_section_start_end">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_covalent_bonds.</span></span><span class="sig-name descname"><span class="pre">get_data_section_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_lines_per_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'starts</span> <span class="pre">with'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_covalent_bonds.html#get_data_section_start_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.get_data_section_start_end" title="Link to this definition"></a></dt>
+<dd><p>Read the LAMMPS data file specified by the filepath and return the indices of the first and final
+lines of the section specified. Also return the index of the last line in the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>string</em>) – Path to the LAMMPS data file.</p></li>
+<li><p><strong>section</strong> (<em>string</em>) – This string must match exactly with the line that indicates the start of the
+desired section in the LAMMPS data file. ex. If the desired section is the ‘Bond Coeffs’ section,
+section must equal ‘Bond Coeffs’.</p></li>
+<li><p><strong>empty_lines_per_section</strong> (<em>int</em>) – The number of empty lines that are in each section of the file. Default
+is 2, consistent with LAMMPS data file format.</p></li>
+<li><p><strong>header_type</strong> (<em>string</em>) – Indicates whether the section header contains the section string or starts with the section string.
+Options are ‘starts with’ or ‘contains’. Default is ‘starts with’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The index of the first line in the requested section.
+end_ind (int): The index of the last line in the requested section.
+final_ind (int): The index of the last line in the file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>start_ind (int)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Invalid input for header type if header_type is not a recognized sring.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_covalent_bonds.identify_broken_bonds">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_covalent_bonds.</span></span><span class="sig-name descname"><span class="pre">identify_broken_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre_data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_covalent_bonds.html#identify_broken_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.identify_broken_bonds" title="Link to this definition"></a></dt>
+<dd><p>Identifies broken molecular bonds by comparing bond data before and after a simulation,
+and enriches the results with atom metadata from a PSF file.</p>
+<p>This function reads bond information from two LAMMPS-style data files representing
+the system before and after a simulation (e.g., ionization or tensile testing).
+It identifies bonds that existed in the pre-simulation file but are missing in the
+post-simulation file, indicating they were broken. It then enriches this list with
+atom metadata from a PSF file for better interpretability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pre_data_file</strong> (<em>str</em>) – Path to the data file containing bond information before the simulation.</p></li>
+<li><p><strong>post_data_file</strong> (<em>str</em>) – Path to the data file containing bond information after the simulation.</p></li>
+<li><p><strong>psf_file</strong> (<em>str</em>) – Path to the PSF file containing atom metadata (e.g., segment names, residue IDs).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A DataFrame containing information about the broken bonds, including:</dt><dd><ul class="simple">
+<li><p>BondID</p></li>
+<li><p>BondType</p></li>
+<li><p>AtomID1, AtomID2</p></li>
+<li><p>Segment names and atom types for both atoms involved in each broken bond</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If any of the input files are not found.</p></li>
+<li><p><strong>ValueError</strong> – If the expected sections are not found in the input files.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">broken_bonds_df</span> <span class="o">=</span> <span class="n">identify_broken_bonds</span><span class="p">(</span><span class="s2">&quot;ionized.data&quot;</span><span class="p">,</span> <span class="s2">&quot;tensile_test.data&quot;</span><span class="p">,</span> <span class="s2">&quot;ionized.psf&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">broken_bonds_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_covalent_bonds.plot_bonds_broken_single_simulation">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_covalent_bonds.</span></span><span class="sig-name descname"><span class="pre">plot_bonds_broken_single_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_covalent_bonds.html#plot_bonds_broken_single_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.plot_bonds_broken_single_simulation" title="Link to this definition"></a></dt>
+<dd><p>Plot the cumulative number of bonds broken of each time as a function of frame for a single simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – A DataFrame where each column contains the cumulative number of bonds broken at each
+frame in the LAMMPS simulation. Output from bondbreak_data_to_df.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – The value as the title of the plot created by this function.</p></li>
+<li><p><strong>data_file_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the data file that contains properly labeled Bond Coeffs section for use
+with nested convert_types_to_labels function. Specify if legend labels should be converted from ‘type int’
+to ‘type int: alphanumericatomtype1-alphanumericatomtype2’</p></li>
+<li><p><strong>stress_df</strong> (<em>pandas.DataFrame</em>) – The dataframe output by the function crosslinked_mfp_analysis.crosslinked_mfp_analysis.
+stress_strain.read_stress_strain which is assumed to correspond to the same simulation as the bond breaking data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Plot of all bond types that were broken throughout the simulation as a function of frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_covalent_bonds.process_broken_bonds">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_covalent_bonds.</span></span><span class="sig-name descname"><span class="pre">process_broken_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_covalent_bonds.html#process_broken_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_covalent_bonds.process_broken_bonds" title="Link to this definition"></a></dt>
+<dd><p>Processes files in a directory that match the pattern ‘bb*.dat’ and aggregates
+broken bond data into a single DataFrame.</p>
+<p>This function searches the specified directory for files whose names start with
+‘bb’ and end with ‘.dat’. For each matching file, it reads the second column
+(index 1) of numerical data, assumed to represent the number of bond breaks,
+and adds it as a column to a cumulative DataFrame. The column name is derived
+from the unique bond type indicated in the filename.</p>
+<p>Args:
+simulation_path (str): The path to the directory containing the ‘.dat’ files.</p>
+<p>Returns:
+pandas.DataFrame: A DataFrame where each column corresponds to a bond type
+and contains the number of breaks from the respective file.</p>
+</dd></dl>
+
+<dl class="py function" id="module-crosslinked_mfp_analysis.analyze_ion_coordination_bonds">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">generate_combinations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#generate_combinations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations" title="Link to this definition"></a></dt>
+<dd><p>Generate all possible combinations of elements in the input list.</p>
+<p>This function generates a list of tuples containing every possible combination
+of lengths from 2 to N (where N is the length of the input list) for a given list
+of string elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_list</strong> (<em>list</em><em> of </em><em>str</em>) – A list of string elements.</p></li>
+<li><p><strong>min_length</strong> (<em>int</em>) – The minimum length of a combination.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of tuples, each containing a combination of elements
+from the input list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">input_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generate_combinations</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span>
+<span class="go">[(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;d&#39;), (&#39;b&#39;, &#39;c&#39;), (&#39;b&#39;, &#39;d&#39;), (&#39;c&#39;, &#39;d&#39;),</span>
+<span class="go"> (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;b&#39;, &#39;d&#39;), (&#39;a&#39;, &#39;c&#39;, &#39;d&#39;), (&#39;b&#39;, &#39;c&#39;, &#39;d&#39;),</span>
+<span class="go"> (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">get_characters_after_last_colon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#get_characters_after_last_colon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon" title="Link to this definition"></a></dt>
+<dd><p>Extract all characters after the last colon ‘:’ in the input string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_string</strong> (<em>str</em>) – The input string containing one or more colons.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A substring containing all characters after the last colon.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">ion_coordination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ion_surrounding_atoms_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#ion_coordination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination" title="Link to this definition"></a></dt>
+<dd><p>Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction
+between requested atom types in atom_types list facilitated by the ions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ion_surrounding_atoms_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion.</p></li>
+<li><p><strong>atom_types</strong> (<em>list</em>) – A list of atom types in string format to look for around iron atoms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Each list element is a list of the keys found in the corresponding list element of</dt><dd><p>ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>protein_protein_tracking (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">plot_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">of</span> <span class="pre">Interaction</span> <span class="pre">Presence'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Frame'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#plot_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Generates a heatmap from a dictionary where each key corresponds to a list of 0’s and 1’s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<em>dict</em>) – A dictionary where keys are row labels and values are lists of 0’s and 1’s.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) – Plot title. Default is ‘Heatmap of Interaction Presence’.</p></li>
+<li><p><strong>time_series</strong> (<em>list like</em>) – A list or array that is the same length as the number of keys in data_dict. Default is None</p></li>
+<li><p><strong>xlabel</strong> (<em>string</em>) – x-axis label. Default is ‘Frame’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Displays a heatmap plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>data_dict = {</dt><dd><p>‘Row1’: [0, 1, 0, 1],
+‘Row2’: [1, 0, 1, 0],
+‘Row3’: [0, 0, 1, 1]</p>
+</dd>
+</dl>
+<p>}
+plot_heatmap(data_dict)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">protein_protein_ion_coordination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ion_surrounding_atoms_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_protein</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['CLA',</span> <span class="pre">'FE3P',</span> <span class="pre">'HT',</span> <span class="pre">'OT']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#protein_protein_ion_coordination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination" title="Link to this definition"></a></dt>
+<dd><p>Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction
+facilitated by the ion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ion_surrounding_atoms_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion.</p></li>
+<li><p><strong>non_protein</strong> (<em>list</em>) – A list of all of the atom types in this system that are not protein formatted as strings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Each list element is a list of the keys found in the corresponding list element of</dt><dd><p>ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>protein_protein_tracking (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">track_protein_protein_interactions_over_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_protein_tracking</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_surrounding_atoms_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_protein</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['CLA',</span> <span class="pre">'FE3P',</span> <span class="pre">'HT',</span> <span class="pre">'OT']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#track_protein_protein_interactions_over_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time" title="Link to this definition"></a></dt>
+<dd><p>Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.
+0 means the interaction is not present at this timestep. 1 means it is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_protein_tracking</strong> (<em>list</em>) – Each list element is a list of the keys found in the corresponding list element of
+ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format
+as output by the functions protein_protein_ion_coordination and ion_coordination.</p></li>
+<li><p><strong>ion_surrounding_atoms_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion.</p></li>
+<li><p><strong>non_protein</strong> (<em>list</em>) – A list of all of the atom types in this system that are not protein formatted as strings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where keys specify which interaction this is. Value is a list, where each</dt><dd><p>entry is a boolean indicating whether or not this interaction is present at this timestep.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>interaction_states (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_coordination_bonds.</span></span><span class="sig-name descname"><span class="pre">track_specific_interactions_over_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_protein_tracking</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_surrounding_atoms_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_coordination_bonds.html#track_specific_interactions_over_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time" title="Link to this definition"></a></dt>
+<dd><p>Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.
+0 means the interaction is not present at this timestep. 1 means it is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_protein_tracking</strong> (<em>list</em>) – Each list element is a list of the keys found in the corresponding list element of
+ion_surrounding_atoms_each_frame where an ion is facilitating a protein-protein interaction. Same format
+as output by the functions protein_protein_ion_coordination and ion_coordination.</p></li>
+<li><p><strong>ion_surrounding_atoms_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion.</p></li>
+<li><p><strong>atom_types</strong> (<em>list</em>) – A list of atom types in string format to look for around iron atoms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where keys specify which interaction this is. Value is a list, where each</dt><dd><p>entry is a boolean indicating whether or not this interaction is present at this timestep.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>interaction_states (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-crosslinked_mfp_analysis.analyze_ion_surroundings">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">collect_ion_surroundings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">universe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FE3P'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#collect_ion_surroundings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings" title="Link to this definition"></a></dt>
+<dd><p>Make a list of dictionaries to store the surroundings of each ion within the specified cutoff distance
+at each frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>universe</strong> (<em>MDAnalysis Universe</em>) – trajectory for this simulation.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff distance to be used to make interaction lists with ions.</p></li>
+<li><p><strong>ion_type</strong> (<em>string</em>) – The atom type as it appears in the psf file used to make the universe.</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – Number of frames to skip between analyzed frames in the trajectory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Each list element is a dictionary with keys specifying each ion’s</dt><dd><p>residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ion_surrounding_atoms_each_frame (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">count_atom_types_around_ion_over_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ion_surroundings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#count_atom_types_around_ion_over_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time" title="Link to this definition"></a></dt>
+<dd><p>Count how many times each atom type is within the cutoff distance of an ion at each frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ion_surroundings</strong> (<em>dictionary</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion. Same as output of collect_iron_surroundings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where each key is an atom type, and the corresponding value for each</dt><dd><p>key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>types_dict (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">make_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dumpfreqs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#make_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Make a numpy array that contains the time in femtoseconds corresponding to each frame in a simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>durations</strong> (<em>list</em>) – Each entry is the total number of timesteps in a dcd file.</p></li>
+<li><p><strong>dumpfreqs</strong> (<em>list</em>) – Each entry is the number of timesteps between each output frame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Each element in time represents the time in real units corresponding to each frame</dt><dd><p>in the trajectory.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time (np.array)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">plot_counts_of_atom_types_around_ion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">types_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#plot_counts_of_atom_types_around_ion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion" title="Link to this definition"></a></dt>
+<dd><p>Make a plot of the number of times each atom type is within the cutoff distance of an ion over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>types_dict</strong> (<em>dictionary</em>) – A dictionary where each key is an atom type, and the corresponding value for each
+key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.
+Same as the output of count_atom_types_around_ion_over_time.</p></li>
+<li><p><strong>timeseries</strong> (<em>list like</em>) – The timeseries data corresponding to this simulation.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) – Suptitle to be displayed over the plot.</p></li>
+<li><p><strong>normalize</strong> (<em>boolean</em>) – Indicates whether to normalize type counts by the number of total ions in the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">sort_and_plot_unique_surroundings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environments_over_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_entries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#sort_and_plot_unique_surroundings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings" title="Link to this definition"></a></dt>
+<dd><p>Make a plot counting the number of times each unique environment appears at each frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>environments_over_time</strong> (<em>dictionary</em>) – A dictionary where each key is unique to a configuration of atoms around
+an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms
+appears around an ion in each frame. Same as the output from unique_surroundings_frequency.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff distance used to get ion surroundings.</p></li>
+<li><p><strong>timeseries</strong> (<em>list like</em>) – The timeseries data corresponding to this simulation.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) – Suptitle to be displayed over the plot.</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – Number of frames that were skipped between analyzed frames in the trajectory, when
+running the function collect_ion_surroundings.</p></li>
+<li><p><strong>max_entries</strong> (<em>int</em>) – Specifies the maximum number of data series to be included in the plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_ion_surroundings.</span></span><span class="sig-name descname"><span class="pre">unique_surroundings_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surroundings_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_ion_surroundings.html#unique_surroundings_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency" title="Link to this definition"></a></dt>
+<dd><p>For each unique set of atom types surrounding a certain atom, make a list that specifies how many times
+that unique set appears at each frame in the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>surroundings_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with keys specifying each ion’s
+residue ID. Corresponding value is an atom selection from the universe with all atoms within the cutoff
+distance of the ion. Has the same format as the output of collect_iron_surroundings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where each key is unique to a configuration of atoms around</dt><dd><p>an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms
+appears around an ion in each frame.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>environments_over_time (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-crosslinked_mfp_analysis.analyze_og312_surroundings">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_og312_surroundings.collect_og312_surroundings">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_og312_surroundings.</span></span><span class="sig-name descname"><span class="pre">collect_og312_surroundings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">universe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DO2P'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_og312_surroundings.html#collect_og312_surroundings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.collect_og312_surroundings" title="Link to this definition"></a></dt>
+<dd><p>From a specified MDAnalysis universe, for each residue with residue name equal to the variable resname, get a list of the atoms that
+are within a cutoff distance of the ‘type OG312’ atoms on its sidechain. Return a list that contains
+an element corresponding to each frame analyzed in the trajectory. Each list element is a dictionary with
+keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: ‘Atom Selection’,
+which holds the atom selection for the ‘type OG312’ atoms in this residue, and ‘Surroundings Selection’, which holds the atom selection
+for atoms within the cutoff distance of atoms in ‘Atom Selection’ excluding ‘type CA’ atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>universe</strong> (<em>MDAnalysis Universe</em>) – trajectory for this simulation.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff distance to be used to define nearby atoms.</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – Number of frames to skip between analyzed frames in the trajectory. Default is 100.</p></li>
+<li><p><strong>resname</strong> (<em>string</em>) – String formatted residue name for the residue containing ‘OG312’ atoms. Default is ‘DO2P’.</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em>) – Specify whether print statements are output after each frame in the MDAnalysis object has been analyzed.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Each list element is a dictionary with
+keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: ‘Atom Selection’,
+which holds the atom selection for the ‘type OG312’ atoms in this residue, and ‘Surroundings Selection’, which holds the atom selection
+for atoms within the cutoff distance of atoms in ‘Atom Selection’ excluding ‘type CA’ atoms.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>og312_surrounding_atoms_each_frame (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_og312_surroundings.count_atom_types_around_og312_over_time">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_og312_surroundings.</span></span><span class="sig-name descname"><span class="pre">count_atom_types_around_og312_over_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">og312_surroundings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_og312_surroundings.html#count_atom_types_around_og312_over_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.count_atom_types_around_og312_over_time" title="Link to this definition"></a></dt>
+<dd><p>Count how many times each atom type is within the cutoff distance of an og312 atom at each frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>og312_surroundings</strong> (<em>list</em>) – Each list element is a dictionary with</p></li>
+<li><p><strong>segid</strong> (<em>keys indicating the</em>) – resid combination for this residue. Those keys specify another dictionary with two keys: ‘Atom Selection’,</p></li>
+<li><p><strong>residue</strong> (<em>which holds the atom selection for the 'type OG312' atoms in this</em>)</p></li>
+<li><p><strong>Selection'</strong> (<em>and 'Surroundings</em>)</p></li>
+<li><p><strong>selection</strong> (<em>which holds the atom</em>)</p></li>
+<li><p><strong>atoms.</strong> (<em>for atoms within the cutoff distance</em><em> of </em><em>atoms in 'Atom Selection' excluding 'type CA'</em>)</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em>) – If verbose, print an updated message every time a frame is analyzed. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where each key is an atom type, and the corresponding value for each</dt><dd><p>key is a count of the number of times this atom type is within the cutoff distance of an ion at each frame.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>types_dict (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.analyze_og312_surroundings.unique_og312_surroundings_frequency">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.analyze_og312_surroundings.</span></span><span class="sig-name descname"><span class="pre">unique_og312_surroundings_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surroundings_each_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/analyze_og312_surroundings.html#unique_og312_surroundings_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.analyze_og312_surroundings.unique_og312_surroundings_frequency" title="Link to this definition"></a></dt>
+<dd><p>For each unique set of atom types surrounding a group of atoms, make a list that specifies how many times
+that unique set appears at each frame in the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>surroundings_each_frame</strong> (<em>list</em>) – Each list element is a dictionary with
+keys indicating the segid:resid combination for this residue. Those keys specify another dictionary with two keys: ‘Atom Selection’,
+which holds the atom selection for the ‘type OG312’ atoms in this residue, and ‘Surroundings Selection’, which holds the atom selection
+for atoms within the cutoff distance of atoms in ‘Atom Selection’ excluding ‘type CA’ atoms. Same as output from collect_og312_surroundings.</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em>) – Specify whether print statements are output after each list element in surroundings_each_frame has been analyzed.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where each key is unique to a configuration of atoms around</dt><dd><p>an ion. Each value is a list where each element specifies the number of times that unique configuration of atoms
+appears around an ion in each frame.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>environments_over_time (dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-crosslinked_mfp_analysis.say_hello">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.say_hello.say_hello">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.say_hello.</span></span><span class="sig-name descname"><span class="pre">say_hello</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/say_hello.html#say_hello"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.say_hello.say_hello" title="Link to this definition"></a></dt>
+<dd><p>Function to practice writing correct docstrings in Google Style ahead
+of developing the actual package.</p>
+<p>Say hello.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. Prints the string ‘Hello’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-crosslinked_mfp_analysis.stress_strain">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.stress_strain.elastic_modulus">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.stress_strain.</span></span><span class="sig-name descname"><span class="pre">elastic_modulus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ss_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/stress_strain.html#elastic_modulus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.stress_strain.elastic_modulus" title="Link to this definition"></a></dt>
+<dd><p>Calculate the elastic modulus as specific</p>
+<p>Take as input a DataFrame formatted by the function read_stress_strain. Calculate the
+elastic modulus by performing a linear regression on stress values that correspond to strains
+between lower_strain and upper_strain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ss_df</strong> (<em>Pandas DataFrame</em>) – A Pandas DataFrame with columns ‘Strain’,’Pxx (kPa)’,’Pyy (kPa)’, ‘Pzz (kPa)’
+extracted from the file specified by file_path.</p></li>
+<li><p><strong>lower_strain</strong> (<em>float</em>) – A value that specifies the lower bound for a point to fall within the linear elastic region.</p></li>
+<li><p><strong>upper_strain</strong> (<em>float</em>) – A Value that specifies the upper bound for a point to fall within the linear elastic region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The elastic modulus in MPa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>elastic_modulus (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="crosslinked_mfp_analysis.stress_strain.read_stress_strain">
+<span class="sig-prename descclassname"><span class="pre">crosslinked_mfp_analysis.stress_strain.</span></span><span class="sig-name descname"><span class="pre">read_stress_strain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crosslinked_mfp_analysis/stress_strain.html#read_stress_strain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#crosslinked_mfp_analysis.stress_strain.read_stress_strain" title="Link to this definition"></a></dt>
+<dd><p>Read the output of the file stress_strain.txt into a Pandas DataFrame.
+Calculate the cumulative toughness in a new column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>string</em>) – Specify the path to the file stress_strain.txt.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Use this integer as a window size over which to
+average stress data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A Pandas DataFrame with columns ‘Strain’,</dt><dd><p>’Pxx (kPa)’,’Pyy (kPa)’, ‘Pzz (kPa)’
+extracted from the file specified by file_path.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ss_df (Pandas DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="crosslinked_mfp_analysis documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jacob Graham.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
