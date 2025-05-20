@@ -3,6 +3,8 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import sphinx_rtd_theme
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -19,8 +21,13 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_autodoc_typehints',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'sphinxcontrib.googleanalytics'
 ]
+
+# Set the tracking ID for sphinxcontrib.googleanalytics
+googleanalytics_id = 'G-XXXXXXXXXX'
+googleanalytics_enabled = True
 
 # Optional: configure napoleon
 
@@ -48,7 +55,6 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 html_theme_options = {
-    'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
     'analytics_anonymize_ip': False,
     'logo_only': False,
     'prev_next_buttons_location': 'bottom',
@@ -65,6 +71,12 @@ html_theme_options = {
     'includehidden': True,
     'titles_only': False
 }
+
+# Add custom CSS
+html_css_files = ['custom.css']
+
+# Add logo and favicon
+html_logo = "_static/logo.png"
 
 import os
 import sys
