@@ -40,9 +40,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 </ul>
 
         </div>
@@ -78,7 +77,7 @@
 
 
 <div class="viewcode-block" id="generate_combinations">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.generate_combinations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_combinations</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all possible combinations of elements in the input list.</span>
 
@@ -111,7 +110,7 @@
 
 
 <div class="viewcode-block" id="get_characters_after_last_colon">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.get_characters_after_last_colon">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_characters_after_last_colon</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract all characters after the last colon &#39;:&#39; in the input string.</span>
 
@@ -129,7 +128,7 @@
 
 
 <div class="viewcode-block" id="protein_protein_ion_coordination">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.protein_protein_ion_coordination">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">protein_protein_ion_coordination</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">non_protein</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CLA&quot;</span><span class="p">,</span> <span class="s2">&quot;FE3P&quot;</span><span class="p">,</span> <span class="s2">&quot;HT&quot;</span><span class="p">,</span> <span class="s2">&quot;OT&quot;</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction</span>
@@ -178,7 +177,7 @@
 
 
 <div class="viewcode-block" id="ion_coordination">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.ion_coordination">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ion_coordination</span><span class="p">(</span><span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Keep track of which surroundings stored in ion_surrounding_atoms_each_frame indicate a protein-protein interaction</span>
@@ -235,7 +234,7 @@
 
 
 <div class="viewcode-block" id="track_protein_protein_interactions_over_time">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_protein_protein_interactions_over_time">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">track_protein_protein_interactions_over_time</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">,</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">non_protein</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CLA&quot;</span><span class="p">,</span> <span class="s2">&quot;FE3P&quot;</span><span class="p">,</span> <span class="s2">&quot;HT&quot;</span><span class="p">,</span> <span class="s2">&quot;OT&quot;</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.</span>
@@ -298,7 +297,7 @@
 
 
 <div class="viewcode-block" id="track_specific_interactions_over_time">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.track_specific_interactions_over_time">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">track_specific_interactions_over_time</span><span class="p">(</span><span class="n">protein_protein_tracking</span><span class="p">,</span> <span class="n">ion_surrounding_atoms_each_frame</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Track whether or not each interaction detected in protein_protein_tracking is present at each timestep.</span>
@@ -370,7 +369,7 @@
 
 
 <div class="viewcode-block" id="plot_heatmap">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_coordination_bonds.plot_heatmap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_heatmap</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Heatmap of Interaction Presence&#39;</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Frame&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a heatmap from a dictionary where each key corresponds to a list of 0&#39;s and 1&#39;s.</span>

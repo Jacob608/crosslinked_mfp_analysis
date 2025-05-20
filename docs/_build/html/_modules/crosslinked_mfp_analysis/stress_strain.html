@@ -40,9 +40,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 </ul>
 
         </div>
@@ -79,7 +78,7 @@
 
 
 <div class="viewcode-block" id="read_stress_strain">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.stress_strain.read_stress_strain">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.stress_strain.read_stress_strain">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_stress_strain</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Read the output of the file stress_strain.txt into a Pandas DataFrame.</span>
 <span class="sd">    Calculate the cumulative toughness in a new column.</span>
@@ -120,7 +119,7 @@
 
 
 <div class="viewcode-block" id="elastic_modulus">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.stress_strain.elastic_modulus">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.stress_strain.elastic_modulus">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">elastic_modulus</span><span class="p">(</span><span class="n">ss_df</span><span class="p">,</span> <span class="n">lower_strain</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">upper_strain</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculate the elastic modulus as specific</span>
 

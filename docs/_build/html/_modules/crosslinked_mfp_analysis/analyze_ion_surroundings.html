@@ -40,9 +40,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../crosslinked_mfp_analysis.html">crosslinked_mfp_analysis</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 </ul>
 
         </div>
@@ -77,7 +76,7 @@
 
 
 <div class="viewcode-block" id="make_timeseries">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.make_timeseries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_timeseries</span><span class="p">(</span><span class="n">durations</span><span class="p">,</span> <span class="n">dumpfreqs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a numpy array that contains the time in femtoseconds corresponding to each frame in a simulation.</span>
@@ -101,7 +100,7 @@
 
 
 <div class="viewcode-block" id="collect_ion_surroundings">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.collect_ion_surroundings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">collect_ion_surroundings</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">ion_type</span><span class="o">=</span><span class="s1">&#39;FE3P&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a list of dictionaries to store the surroundings of each ion within the specified cutoff distance</span>
@@ -144,7 +143,7 @@
 
 
 <div class="viewcode-block" id="unique_surroundings_frequency">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.unique_surroundings_frequency">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unique_surroundings_frequency</span><span class="p">(</span><span class="n">surroundings_each_frame</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For each unique set of atom types surrounding a certain atom, make a list that specifies how many times</span>
@@ -200,7 +199,7 @@
 
 
 <div class="viewcode-block" id="sort_and_plot_unique_surroundings">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.sort_and_plot_unique_surroundings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sort_and_plot_unique_surroundings</span><span class="p">(</span><span class="n">environments_over_time</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">timeseries</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_entries</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a plot counting the number of times each unique environment appears at each frame.</span>
@@ -242,7 +241,7 @@
 
 
 <div class="viewcode-block" id="count_atom_types_around_ion_over_time">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.count_atom_types_around_ion_over_time">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">count_atom_types_around_ion_over_time</span><span class="p">(</span><span class="n">ion_surroundings</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Count how many times each atom type is within the cutoff distance of an ion at each frame.</span>
@@ -275,7 +274,7 @@
 
 
 <div class="viewcode-block" id="plot_counts_of_atom_types_around_ion">
-<a class="viewcode-back" href="../../crosslinked_mfp_analysis.html#crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion">[docs]</a>
+<a class="viewcode-back" href="../../usage.html#crosslinked_mfp_analysis.analyze_ion_surroundings.plot_counts_of_atom_types_around_ion">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_counts_of_atom_types_around_ion</span><span class="p">(</span><span class="n">types_dict</span><span class="p">,</span> <span class="n">timeseries</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a plot of the number of times each atom type is within the cutoff distance of an ion over time.</span>
