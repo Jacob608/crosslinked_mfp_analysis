@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def collect_og312_surroundings(universe, cutoff, step=100, resname='DO2P', verbose=True):
+def collect_og312_surroundings(universe, cutoff, step=100, resname='DO2E', verbose=True):
     """
     From a specified MDAnalysis universe, for each residue with residue name equal to the variable resname, get a list of the atoms that
     are within a cutoff distance of the 'type OG312' atoms on its sidechain. Return a list that contains
@@ -14,7 +14,7 @@ def collect_og312_surroundings(universe, cutoff, step=100, resname='DO2P', verbo
         universe (MDAnalysis Universe): trajectory for this simulation.
         cutoff (float): The cutoff distance to be used to define nearby atoms.
         step (int): Number of frames to skip between analyzed frames in the trajectory. Default is 100.
-        resname (string): String formatted residue name for the residue containing 'OG312' atoms. Default is 'DO2P'.
+        resname (string): String formatted residue name for the residue containing 'OG312' atoms. Default is 'DO2E'.
         verbose (boolean): Specify whether print statements are output after each frame in the MDAnalysis object has been analyzed.
             Default is True.
 
