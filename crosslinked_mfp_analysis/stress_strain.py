@@ -1,4 +1,4 @@
-# Import necesary libraries.
+# Import necessary libraries.
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -6,7 +6,7 @@ from sklearn.linear_model import LinearRegression
 # data extracted from the file stress-strain.txt.
 
 
-def read_stress_strain(file_path, window_size=1000):
+def read_stress_strain(file_path, window_size=1000, step=1):
     """ Read the output of the file stress_strain.txt into a Pandas DataFrame.
     Calculate the cumulative toughness in a new column.
 
@@ -14,6 +14,8 @@ def read_stress_strain(file_path, window_size=1000):
         file_path (string): Specify the path to the file stress_strain.txt.
         window_size (int): Use this integer as a window size over which to
             average stress data.
+        step (int): Use every this many entries of stress strain data to reduce
+            computational time. Default is 1.
 
     Returns:
         ss_df (Pandas DataFrame): A Pandas DataFrame with columns 'Strain',
@@ -21,6 +23,7 @@ def read_stress_strain(file_path, window_size=1000):
             extracted from the file specified by file_path.
     """
     ss_df = pd.read_csv(file_path, sep=' ', header=None, skiprows=[0])
+    ss_df = ss_df.iloc[::step]
     # Assign new column names.
     ss_df.columns = ['Strain', 'Pxx (kPa)', 'Pyy (kPa)', 'Pzz (kPa)']
     # Add a moving average of the pressure columns and convert from kPa to MPa.
@@ -41,7 +44,7 @@ def read_stress_strain(file_path, window_size=1000):
         toughness_list.append(toughness)
     ss_df['Toughness (MJ/m$^3$)'] = toughness_list
 
-    return ss_df
+    return ss_df.reset_index()
 
 
 def elastic_modulus(ss_df, lower_strain=0.01, upper_strain=0.03):

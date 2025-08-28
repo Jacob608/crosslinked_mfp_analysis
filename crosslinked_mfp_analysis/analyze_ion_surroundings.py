@@ -187,7 +187,7 @@ def count_atom_types_around_ion_over_time(ion_surroundings):
     return types_dict
 
 
-def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normalize=False):
+def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normalize=False, step=100):
     """
     Make a plot of the number of times each atom type is within the cutoff distance of an ion over time.
 
@@ -198,6 +198,8 @@ def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normaliz
         timeseries (list like): The timeseries data corresponding to this simulation.
         title (string): Suptitle to be displayed over the plot.
         normalize (boolean): Indicates whether to normalize type counts by the number of total ions in the system.
+        step (int): Indicates with what frequency tiemseries data should be plotted. Based on steps chosen in previous
+            function, collect_ion_surroundings.
     Returns:
         Nothing.
     """
@@ -213,7 +215,7 @@ def plot_counts_of_atom_types_around_ion(types_dict, timeseries, title, normaliz
     for i, (label, series) in enumerate(sorted_types_dict[:max_plots]):
         if normalize:
             series = series / 160
-        plt.plot(timeseries[::100] / 1000000, series, label=label, linestyle='--', marker='o', color=colors[i])
+        plt.plot(timeseries[::step] / 1000000, series, label=label, linestyle='--', marker='o', color=colors[i])
     plt.suptitle(title)
     plt.legend()
     plt.xlabel('Time (ns)')
